@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="swiss" class="antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Bouclier 20h–22h — V2 Survival Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ═══ THEME VARIABLES ═══ */
+    :root, [data-theme="swiss"] {
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-head: 'Inter', system-ui, sans-serif;
+      --c-bg: #f1f5f9; --c-page: #ffffff; --c-text: #1a1a1a;
+      --c-muted: #94a3b8; --c-border: rgba(226,232,240,0.6);
+      --c-accent: #1a1a1a; --c-accent-fg: #ffffff;
+      --c-row-alt: rgba(248,250,252,0.4);
+      --c-hdr-bg: #1a1a1a; --c-hdr-fg: #f8fafc;
+      --c-bar-on: #1a1a1a; --c-bar-off: #e2e8f0;
+      --c-badge-bg: #f8fafc; --c-badge-dot: #22c55e;
+      --c-danger: #dc2626;
+      --border-s: solid; --border-w: 1px;
+      --head-style: normal; --head-weight: 900;
+    }
+    [data-theme="lab"] {
+      --font-body: 'Roboto Mono', monospace; --font-mono: 'Roboto Mono', monospace;
+      --font-head: 'Roboto Mono', monospace;
+      --c-bg: #0c1222; --c-page: #0f172a; --c-text: #e2e8f0;
+      --c-muted: #64748b; --c-border: rgba(51,65,85,0.6);
+      --c-accent: #3b82f6; --c-accent-fg: #ffffff;
+      --c-row-alt: rgba(30,41,59,0.5);
+      --c-hdr-bg: #1e3a5f; --c-hdr-fg: #e0f2fe;
+      --c-bar-on: #3b82f6; --c-bar-off: #1e3a5f;
+      --c-badge-bg: #1e293b; --c-badge-dot: #3b82f6;
+      --c-danger: #ef4444;
+      --border-s: solid; --border-w: 1px;
+      --head-style: normal; --head-weight: 700;
+    }
+    [data-theme="athlete"] {
+      --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'JetBrains Mono', monospace;
+      --font-head: 'Inter', system-ui, sans-serif;
+      --c-bg: #f5f5f5; --c-page: #ffffff; --c-text: #000000;
+      --c-muted: #6b7280; --c-border: #000000;
+      --c-accent: #dc2626; --c-accent-fg: #ffffff;
+      --c-row-alt: rgba(245,245,245,0.5);
+      --c-hdr-bg: #000000; --c-hdr-fg: #ffffff;
+      --c-bar-on: #dc2626; --c-bar-off: #fecaca;
+      --c-badge-bg: #000000; --c-badge-dot: #dc2626;
+      --c-danger: #dc2626;
+      --border-s: solid; --border-w: 3px;
+      --head-style: italic; --head-weight: 900;
+    }
+    [data-theme="eco"] {
+      --font-body: 'Lora', Georgia, serif; --font-mono: 'JetBrains Mono', monospace;
+      --font-head: 'Lora', Georgia, serif;
+      --c-bg: #fefce8; --c-page: #fffef5; --c-text: #422006;
+      --c-muted: #a8a29e; --c-border: #a3a3a3;
+      --c-accent: #65a30d; --c-accent-fg: #ffffff;
+      --c-row-alt: rgba(254,252,232,0.5);
+      --c-hdr-bg: transparent; --c-hdr-fg: #422006;
+      --c-bar-on: #65a30d; --c-bar-off: #d9f99d;
+      --c-badge-bg: #fef9c3; --c-badge-dot: #65a30d;
+      --c-danger: #b91c1c;
+      --border-s: dashed; --border-w: 1px;
+      --head-style: normal; --head-weight: 700;
+    }
+
+    /* ═══ APPLY FONTS ═══ */
+    body { font-family: var(--font-body); background: var(--c-bg); color: var(--c-text); }
+    h1,h2,h3,.hd { font-family: var(--font-head); font-style: var(--head-style); }
+    .mn { font-family: var(--font-mono); }
+
+    /* ═══ GRID WATERMARK ═══ */
+    [data-theme="swiss"] body, [data-theme="lab"] body {
+      background-image:
+        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    [data-theme="athlete"] body, [data-theme="eco"] body { background-image: none; }
+
+    /* ═══ PRINT ═══ */
+    @media print {
+      @page { size: A4 portrait; margin: 7mm 9mm; }
+      html, body {
+        width: 210mm; margin: 0; padding: 0;
+        background: white !important; background-image: none !important;
+        color: #000 !important; font-family: 'Inter', sans-serif !important;
+        font-style: normal !important;
+      }
+      * { color: #000 !important; font-style: normal !important; }
+      .no-print { display: none !important; }
+      .print-brk { break-inside: avoid; }
+      [contenteditable] { outline: none !important; }
+      .editable-cell { border-bottom-color: transparent !important; background: transparent !important; }
+      #page {
+        margin: 0; padding: 4mm 5mm; gap: 10px !important;
+        box-shadow: none; border: none; border-radius: 0; max-width: 100%;
+        background: white !important;
+      }
+      #shopping-page {
+        page-break-before: always;
+        margin: 0; padding: 6mm 8mm;
+        box-shadow: none; border: none; border-radius: 0;
+        background: white !important;
+      }
+      .bar-filled { background: transparent !important; border: 1px solid #000 !important; }
+      .bar-empty  { background: transparent !important; border: 1px solid #999 !important; }
+      .cat-hdr { background: white !important; color: #000 !important; border-bottom: 1.5px solid #000; }
+      [data-row] > div { background: transparent !important; }
+      .shop-check { border-color: #000 !important; }
+      .shop-check.done { background: transparent !important; }
+      .shop-check.done + span { text-decoration: line-through !important; }
+      .themed-card { border: 1px solid #ccc !important; box-shadow: none !important; }
+      #categories-root { gap: 10px !important; }
+      .cost-stripe { background: transparent !important; border: 2px solid #000 !important; }
+      .cost-stripe * { color: #000 !important; }
+      .tier1-card { border: 2px solid #000 !important; box-shadow: none !important; }
+      .tier1-card * { color: #000 !important; }
+      .tier1-card .tier1-accent { background: transparent !important; color: #000 !important; }
+      .hero-step { font-size: 2rem !important; }
+      .hero-title-text { font-size: 1rem !important; }
+      .ftr-sep { margin-bottom: 6px !important; }
+      .py-print { padding-top: 2px !important; padding-bottom: 2px !important; }
+    }
+
+    /* ═══ THEMED COMPONENTS ═══ */
+    .themed-page { background: var(--c-page); border: var(--border-w) var(--border-s) var(--c-border); }
+    .themed-card { border: var(--border-w) var(--border-s) var(--c-border); }
+    .themed-hdr  { background: var(--c-hdr-bg); color: var(--c-hdr-fg); }
+    .themed-badge { background: var(--c-badge-bg); border: 1px solid var(--c-border); }
+    .tm { color: var(--c-muted); }
+
+    /* ═══ EDITABLE CELLS ═══ */
+    .editable-cell {
+      border-bottom: 1.5px dashed transparent;
+      transition: border-color 0.2s, background-color 0.2s;
+      border-radius: 3px; padding: 1px 3px; margin: -1px -3px; outline: none;
+    }
+    .editable-cell:hover { border-bottom-color: var(--c-muted); background: rgba(128,128,128,0.04); }
+    .editable-cell:focus { border-bottom-color: var(--c-accent); background: rgba(128,128,128,0.02); }
+
+    /* ═══ DELETE BUTTONS ═══ */
+    .row-del { opacity: 0; transition: opacity 0.15s; cursor: pointer; color: var(--c-muted); }
+    .row-del:hover { color: #ef4444; }
+    [data-row]:hover .row-del { opacity: 1; }
+    .cat-del { opacity: 0; transition: opacity 0.15s; cursor: pointer; color: var(--c-muted); }
+    .cat-del:hover { color: #ef4444; }
+    [data-category]:hover > .cat-bar .cat-del { opacity: 1; }
+
+    /* ═══ PILLS ═══ */
+    .pg { display: flex; gap: 2px; padding: 2px; border-radius: 9999px; }
+    .pl {
+      padding: 4px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; border-radius: 9999px; cursor: pointer;
+      transition: all 0.15s; border: none; color: var(--c-muted); background: transparent;
+    }
+    .pl:hover { color: var(--c-text); }
+    .pl.on { background: var(--c-accent); color: var(--c-accent-fg); }
+
+    /* ═══ SHOPPING LIST ═══ */
+    .shop-check {
+      width: 16px; height: 16px; min-width: 16px;
+      border: 1.5px solid var(--c-muted); border-radius: 4px;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shop-check:hover { border-color: var(--c-accent); }
+    .shop-check.done { background: var(--c-accent); border-color: var(--c-accent); }
+    .shop-check.done + span { text-decoration: line-through; color: var(--c-muted); }
+    .shop-check.done svg { opacity: 1; }
+    .shop-check svg { opacity: 0; transition: opacity 0.15s; }
+
+    /* ═══ COMPACT ═══ */
+    #page.compact { gap: 14px !important; padding: 16px 28px !important; }
+    #page.compact .hero-title-text { font-size: 1.3rem !important; }
+    #page.compact .hero-step { font-size: 2.5rem !important; }
+    #page.compact .hero-desc { font-size: 0.75rem !important; }
+    #page.compact .tier1-card { padding: 12px !important; }
+    #page.compact .tier1-name { font-size: 1rem !important; }
+    #page.compact #categories-root { gap: 12px !important; }
+    #page.compact .cat-bar { margin-bottom: 4px !important; }
+    #page.compact [data-row] .px-3 { padding-top: 1px !important; padding-bottom: 1px !important; }
+
+    /* ═══ TRANSITIONS ═══ */
+    .lang-fade { transition: opacity 0.2s ease-in-out; }
+    .lang-fade.fading { opacity: 0; }
+    [data-row],[data-category] { transition: opacity 0.25s ease, max-height 0.3s ease; overflow: visible; }
+
+    /* ═══ COST OF FAILURE ═══ */
+    .cost-stripe {
+      background: var(--c-accent);
+      color: var(--c-accent-fg);
+      padding: 12px 20px;
+      border-radius: 8px;
+    }
+
+    /* ═══ TIER 1 EMERGENCY CARDS ═══ */
+    .tier1-card {
+      border: var(--border-w) var(--border-s) var(--c-border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: box-shadow 0.2s;
+      background: var(--c-page);
+    }
+    .tier1-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .tier1-accent {
+      background: var(--c-accent);
+      color: var(--c-accent-fg);
+      font-weight: 900;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══ HERO PROTOCOL STEPS ═══ */
+    .hero-step {
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .hero-label {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .hero-desc {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center selection:bg-gray-900 selection:text-white">
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="no-print fixed top-0 left-0 right-0 z-50 flex flex-wrap items-center justify-between px-3 py-2 backdrop-blur-xl border-b"
+       style="background: color-mix(in srgb, var(--c-page) 80%, transparent); border-color: var(--c-border);">
+    <div class="flex items-center gap-2 text-xs tm">
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+      <span id="edit-hint"></span>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <div id="tg" class="pg" style="background: color-mix(in srgb, var(--c-text) 5%, transparent);">
+        <button onclick="setTheme('swiss')"   data-t="swiss"   class="pl on">MIN</button>
+        <button onclick="setTheme('lab')"     data-t="lab"     class="pl">LAB</button>
+        <button onclick="setTheme('athlete')" data-t="athlete" class="pl">ATH</button>
+        <button onclick="setTheme('eco')"     data-t="eco"     class="pl">ECO</button>
+      </div>
+      <div id="lg" class="pg" style="background: color-mix(in srgb, var(--c-text) 5%, transparent);">
+        <button onclick="switchLang('en')" data-l="en" class="pl">EN</button>
+        <button onclick="switchLang('fr')" data-l="fr" class="pl on">FR</button>
+        <button onclick="switchLang('es')" data-l="es" class="pl">ES</button>
+        <button onclick="switchLang('it')" data-l="it" class="pl">IT</button>
+        <button onclick="switchLang('ru')" data-l="ru" class="pl">RU</button>
+        <button onclick="switchLang('jp')" data-l="jp" class="pl">JP</button>
+      </div>
+      <button onclick="toggleCompact()" id="btn-compact" class="pl" style="border: 1px solid var(--c-border);">
+        <span id="compact-label"></span>
+      </button>
+      <button onclick="generateShoppingList()" class="pl" style="border: 1px solid var(--c-border);">
+        <span id="shop-label"></span>
+      </button>
+    </div>
+  </div>
+  <div class="no-print h-14"></div>
+
+  <!-- ═══ PAGE 1: SURVIVAL SHIELD ═══ -->
+  <main id="page" class="lang-fade w-full max-w-[860px] themed-page rounded-2xl my-6 px-10 py-12 shadow-xl grid gap-12 relative overflow-hidden">
+
+    <!-- Section: Hero Header -->
+    <section class="print-brk">
+      <header id="header-root">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
+          <div class="space-y-3 max-w-xl">
+            <h1 id="hero-title" contenteditable="true"
+              class="hero-title-text editable-cell text-2xl sm:text-3xl font-black uppercase tracking-tight leading-[1.1] whitespace-pre-line hd"></h1>
+            <p id="subtitle" contenteditable="true"
+              class="editable-cell text-xs font-medium tracking-wide tm"></p>
+            <div class="flex items-center gap-2 pt-1 no-print">
+              <span id="mult-label" class="text-[10px] font-bold uppercase tracking-[0.15em] tm"></span>
+              <div class="pg" style="background: color-mix(in srgb, var(--c-text) 5%, transparent);">
+                <button onclick="setMult(0.5)" data-mult="0.5" class="pl mn">0.5x</button>
+                <button onclick="setMult(1)"   data-mult="1"   class="pl mn on">1x</button>
+                <button onclick="setMult(1.5)" data-mult="1.5" class="pl mn">1.5x</button>
+                <button onclick="setMult(2)"   data-mult="2"   class="pl mn">2x</button>
+              </div>
+            </div>
+          </div>
+          <div class="self-start sm:self-center shrink-0 inline-flex items-center gap-2.5 themed-badge text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full">
+            <span class="w-2 h-2 rounded-full animate-pulse" style="background:var(--c-badge-dot);"></span>
+            <span id="badge-text"></span>
+          </div>
+        </div>
+      </header>
+    </section>
+
+    <!-- Section 1: Cost of Failure -->
+    <section class="print-brk">
+      <div id="cost-section" class="cost-stripe"></div>
+    </section>
+
+    <!-- Section 2: The Protocol (massive typography) -->
+    <section class="print-brk">
+      <div id="protocol-body" class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8"></div>
+    </section>
+
+    <!-- Section 3: Tier 1 — Emergency Defense -->
+    <section class="print-brk">
+      <h2 id="tier1-label" class="text-[11px] font-bold uppercase tracking-[0.2em] tm hd mb-4"></h2>
+      <div id="tier1-root" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- Section 4: Tier 2 — Reinforcements -->
+    <section>
+      <h2 id="tier2-label" class="text-[11px] font-bold uppercase tracking-[0.2em] tm hd mb-4"></h2>
+      <div id="categories-root" class="grid gap-10"></div>
+    </section>
+
+    <!-- Footer -->
+    <section class="print-brk">
+      <footer id="footer-root">
+        <div class="h-px ftr-sep mb-5" style="background:linear-gradient(to right,transparent,var(--c-border),transparent);"></div>
+        <p id="motivation" contenteditable="true" class="editable-cell text-center text-[11px] italic font-medium leading-relaxed tm"></p>
+        <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] mn tracking-wide tm">
+          <span id="footer-ver"></span>
+          <span id="footer-date"></span>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- ═══ PAGE 2: SHOPPING LIST ═══ -->
+  <div id="shopping-page" class="w-full max-w-[860px] themed-page rounded-2xl mb-6 px-10 py-12 shadow-xl hidden">
+    <div class="flex items-start justify-between mb-8">
+      <div>
+        <h2 id="shop-title" class="text-2xl font-black uppercase tracking-tight hd"></h2>
+        <p id="shop-subtitle" class="mt-1 text-xs tm font-medium"></p>
+      </div>
+      <button onclick="closeShop()" class="no-print tm text-lg" style="transition:opacity .15s;">&times;</button>
+    </div>
+    <div id="shop-body" class="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-1"></div>
+    <div class="mt-4 no-print">
+      <button onclick="addShopItem()" class="px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all"
+        style="border:1px dashed var(--c-muted); color:var(--c-muted);">
+        + <span id="shop-add-label"></span>
+      </button>
+    </div>
+    <div class="mt-8 pt-4" style="border-top:1px solid var(--c-border);">
+      <p id="shop-footer" class="text-[10px] mn text-center tm"></p>
+    </div>
+  </div>
+
+  <!-- ═══ ENGINE ═══ -->
+  <script>
+    /* ═══════════════════════════════════════════════════════ */
+    /*  DATA V2 SURVIVAL — 17 Swaps · 3 Categories · 6 Langs */
+    /* ═══════════════════════════════════════════════════════ */
+
+    const TIER1_IDS = [3, 4, 10];
+
+    const META = {
+      en: {
+        heroTitle:"THIS IS THE PROTOCOL\nOF THE DISCIPLINED.",
+        subtitle:"Survival Edition — Panic button for 8 PM cravings. Zero decision fatigue.",
+        badge:"Protocol: Active", editHint:"Everything is editable. Click to customize.",
+        cols:["Craving","Solution","Qty","Macros","Score"],
+        costTitle:"THE COST OF FAILURE",
+        costItems:["+800 kcal damage","\u2022 Ruined sleep architecture","\u2022 Morning regret & guilt spiral"],
+        tier1Label:"\u26a0 TIER 1 \u2014 EMERGENCY DEFENSE",
+        tier2Label:"TIER 2 \u2014 REINFORCEMENTS",
+        tier1Tag:"EMERGENCY",
+        motto:"\u201CYou are one decision away from a completely different outcome.\u201D",
+        ver:"Shield v2.0 — Survival", multLbl:"Portions",
+        shopBtn:"Shopping List", shopTitle:"Shopping List",
+        shopSub:"Generated from your active Swaps", shopFoot:"Print with Ctrl+P \u2014 Auto Page 2.",
+        compact:"Compact", shopAdd:"Add Item",
+      },
+      fr: {
+        heroTitle:"CECI EST LE PROTOCOLE\nDES DISCIPLIN\u00c9S.",
+        subtitle:"\u00c9dition Survie \u2014 Bouton panique pour les fringales de 20h. Z\u00e9ro fatigue d\u00e9cisionnelle.",
+        badge:"Protocole : Actif", editHint:"Tout est \u00e9ditable. Cliquez pour personnaliser.",
+        cols:["Envie","Solution","Qt\u00e9","Macros","Score"],
+        costTitle:"LE CO\u00dbT DE L\u2019\u00c9CHEC",
+        costItems:["+800 kcal de d\u00e9g\u00e2ts","\u2022 Architecture du sommeil d\u00e9truite","\u2022 Regret matinal & spirale de culpabilit\u00e9"],
+        tier1Label:"\u26a0 NIVEAU 1 \u2014 D\u00c9FENSE D\u2019URGENCE",
+        tier2Label:"NIVEAU 2 \u2014 RENFORTS",
+        tier1Tag:"URGENCE",
+        motto:"\u00ab Tu es \u00e0 une d\u00e9cision d\u2019un r\u00e9sultat compl\u00e8tement diff\u00e9rent. \u00bb",
+        ver:"Bouclier v2.0 \u2014 Survie", multLbl:"Portions",
+        shopBtn:"Liste de courses", shopTitle:"Liste de Courses",
+        shopSub:"G\u00e9n\u00e9r\u00e9e depuis vos Swaps actifs", shopFoot:"Imprimez avec Ctrl+P \u2014 Page 2 auto.",
+        compact:"Compact", shopAdd:"Ajouter",
+      },
+      es: {
+        heroTitle:"ESTE ES EL PROTOCOLO\nDE LOS DISCIPLINADOS.",
+        subtitle:"Edici\u00f3n Supervivencia \u2014 Bot\u00f3n de p\u00e1nico para las 20h. Cero fatiga decisional.",
+        badge:"Protocolo: Activo", editHint:"Todo es editable. Haz clic para personalizar.",
+        cols:["Antojo","Soluci\u00f3n","Cant.","Macros","Score"],
+        costTitle:"EL COSTE DEL FRACASO",
+        costItems:["+800 kcal de da\u00f1o","\u2022 Arquitectura del sue\u00f1o destruida","\u2022 Arrepentimiento matutino & espiral de culpa"],
+        tier1Label:"\u26a0 NIVEL 1 \u2014 DEFENSA DE EMERGENCIA",
+        tier2Label:"NIVEL 2 \u2014 REFUERZOS",
+        tier1Tag:"EMERGENCIA",
+        motto:"\u00abEst\u00e1s a una decisi\u00f3n de un resultado completamente diferente.\u00bb",
+        ver:"Escudo v2.0 \u2014 Supervivencia", multLbl:"Porciones",
+        shopBtn:"Lista de compras", shopTitle:"Lista de Compras",
+        shopSub:"Generada desde tus Swaps activos", shopFoot:"Imprime con Ctrl+P \u2014 P\u00e1gina 2 auto.",
+        compact:"Compacto", shopAdd:"Agregar",
+      },
+      it: {
+        heroTitle:"QUESTO \u00c8 IL PROTOCOLLO\nDEI DISCIPLINATI.",
+        subtitle:"Edizione Sopravvivenza \u2014 Pulsante panico per le 20h. Zero fatica decisionale.",
+        badge:"Protocollo: Attivo", editHint:"Tutto \u00e8 modificabile. Clicca per personalizzare.",
+        cols:["Voglia","Soluzione","Qt\u00e0","Macros","Score"],
+        costTitle:"IL COSTO DEL FALLIMENTO",
+        costItems:["+800 kcal di danni","\u2022 Architettura del sonno distrutta","\u2022 Rimpianto mattutino & spirale di senso di colpa"],
+        tier1Label:"\u26a0 LIVELLO 1 \u2014 DIFESA D\u2019EMERGENZA",
+        tier2Label:"LIVELLO 2 \u2014 RINFORZI",
+        tier1Tag:"EMERGENZA",
+        motto:"\u00abSei a una decisione da un risultato completamente diverso.\u00bb",
+        ver:"Scudo v2.0 \u2014 Sopravvivenza", multLbl:"Porzioni",
+        shopBtn:"Lista della spesa", shopTitle:"Lista della Spesa",
+        shopSub:"Generata dai tuoi Swap attivi", shopFoot:"Stampa con Ctrl+P \u2014 Pagina 2 auto.",
+        compact:"Compatto", shopAdd:"Aggiungi",
+      },
+      ru: {
+        heroTitle:"\u042d\u0422\u041e \u041f\u0420\u041e\u0422\u041e\u041a\u041e\u041b\n\u0414\u0418\u0421\u0426\u0418\u041f\u041b\u0418\u041d\u0418\u0420\u041e\u0412\u0410\u041d\u041d\u042b\u0425.",
+        subtitle:"\u0412\u044b\u043f\u0443\u0441\u043a \u0412\u044b\u0436\u0438\u0432\u0430\u043d\u0438\u044f \u2014 \u041a\u043d\u043e\u043f\u043a\u0430 \u043f\u0430\u043d\u0438\u043a\u0438 \u0434\u043b\u044f 20:00. \u041d\u043e\u043b\u044c \u0443\u0441\u0442\u0430\u043b\u043e\u0441\u0442\u0438 \u043e\u0442 \u0440\u0435\u0448\u0435\u043d\u0438\u0439.",
+        badge:"\u041f\u0440\u043e\u0442\u043e\u043a\u043e\u043b: \u0410\u043a\u0442\u0438\u0432\u0435\u043d", editHint:"\u0412\u0441\u0451 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0435\u043c\u043e. \u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u0434\u043b\u044f \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438.",
+        cols:["\u0422\u044f\u0433\u0430","\u0420\u0435\u0448\u0435\u043d\u0438\u0435","\u041a\u043e\u043b-\u0432\u043e","\u041c\u0430\u043a\u0440\u043e\u0441\u044b","\u0411\u0430\u043b\u043b"],
+        costTitle:"\u0426\u0415\u041d\u0410 \u041f\u0420\u041e\u0412\u0410\u041b\u0410",
+        costItems:["+800 \u043a\u043a\u0430\u043b \u0443\u0449\u0435\u0440\u0431\u0430","\u2022 \u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043d\u043d\u0430\u044f \u0430\u0440\u0445\u0438\u0442\u0435\u043a\u0442\u0443\u0440\u0430 \u0441\u043d\u0430","\u2022 \u0423\u0442\u0440\u0435\u043d\u043d\u0435\u0435 \u0441\u043e\u0436\u0430\u043b\u0435\u043d\u0438\u0435 & \u0441\u043f\u0438\u0440\u0430\u043b\u044c \u0432\u0438\u043d\u044b"],
+        tier1Label:"\u26a0 \u0423\u0420\u041e\u0412\u0415\u041d\u042c 1 \u2014 \u042d\u041a\u0421\u0422\u0420\u0415\u041d\u041d\u0410\u042f \u0417\u0410\u0429\u0418\u0422\u0410",
+        tier2Label:"\u0423\u0420\u041e\u0412\u0415\u041d\u042c 2 \u2014 \u041f\u041e\u0414\u041a\u0420\u0415\u041f\u041b\u0415\u041d\u0418\u0415",
+        tier1Tag:"\u0421\u0420\u041e\u0427\u041d\u041e",
+        motto:"\u00ab\u0422\u044b \u0432 \u043e\u0434\u043d\u043e\u043c \u0440\u0435\u0448\u0435\u043d\u0438\u0438 \u043e\u0442 \u0441\u043e\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u043e \u0434\u0440\u0443\u0433\u043e\u0433\u043e \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u0430.\u00bb",
+        ver:"\u0429\u0438\u0442 v2.0 \u2014 \u0412\u044b\u0436\u0438\u0432\u0430\u043d\u0438\u0435", multLbl:"\u041f\u043e\u0440\u0446\u0438\u0438",
+        shopBtn:"\u0421\u043f\u0438\u0441\u043e\u043a \u043f\u043e\u043a\u0443\u043f\u043e\u043a", shopTitle:"\u0421\u043f\u0438\u0441\u043e\u043a \u041f\u043e\u043a\u0443\u043f\u043e\u043a",
+        shopSub:"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u043d \u0438\u0437 \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445 \u0421\u0432\u043e\u043f\u043e\u0432", shopFoot:"Ctrl+P \u2014 \u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 2 \u0430\u0432\u0442\u043e.",
+        compact:"\u041a\u043e\u043c\u043f\u0430\u043a\u0442", shopAdd:"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c",
+      },
+      jp: {
+        heroTitle:"\u3053\u308c\u306f\u898f\u5f8b\u3042\u308b\u8005\u306e\n\u30d7\u30ed\u30c8\u30b3\u30eb\u3067\u3042\u308b\u3002",
+        subtitle:"\u30b5\u30d0\u30a4\u30d0\u30eb\u7248 \u2014 20\u6642\u306e\u7a7a\u8179\u306b\u5bfe\u3059\u308b\u30d1\u30cb\u30c3\u30af\u30dc\u30bf\u30f3\u3002\u6c7a\u65ad\u75b2\u52b4\u30bc\u30ed\u3002",
+        badge:"\u30d7\u30ed\u30c8\u30b3\u30eb\uff1a\u6709\u52b9", editHint:"\u3059\u3079\u3066\u7de8\u96c6\u53ef\u80fd\u3002\u30af\u30ea\u30c3\u30af\u3057\u3066\u30ab\u30b9\u30bf\u30de\u30a4\u30ba\u3002",
+        cols:["\u6b32\u6c42","\u89e3\u6c7a\u7b56","\u91cf","\u30de\u30af\u30ed","\u30b9\u30b3\u30a2"],
+        costTitle:"\u5931\u6557\u306e\u4ee3\u511f",
+        costItems:["+800 kcal\u306e\u30c0\u30e1\u30fc\u30b8","\u2022 \u7761\u7720\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3\u306e\u5d29\u58ca","\u2022 \u671d\u306e\u5f8c\u6094\u3068\u7f6a\u60aa\u611f\u306e\u30b9\u30d1\u30a4\u30e9\u30eb"],
+        tier1Label:"\u26a0 \u30c6\u30a3\u30a2 1 \u2014 \u7dca\u6025\u9632\u885b",
+        tier2Label:"\u30c6\u30a3\u30a2 2 \u2014 \u63f4\u8ecd",
+        tier1Tag:"\u7dca\u6025",
+        motto:"\u300c\u3042\u306a\u305f\u306f\u305f\u3063\u305f\u4e00\u3064\u306e\u6c7a\u65ad\u3067\u3001\u5168\u304f\u9055\u3046\u7d50\u679c\u306b\u305f\u3069\u308a\u7740\u304f\u3002\u300d",
+        ver:"\u30b7\u30fc\u30eb\u30c9 v2.0 \u2014 \u30b5\u30d0\u30a4\u30d0\u30eb", multLbl:"\u30dd\u30fc\u30b7\u30e7\u30f3",
+        shopBtn:"\u8cb7\u3044\u7269\u30ea\u30b9\u30c8", shopTitle:"\u8cb7\u3044\u7269\u30ea\u30b9\u30c8",
+        shopSub:"\u30a2\u30af\u30c6\u30a3\u30d6\u306aSwap\u304b\u3089\u751f\u6210", shopFoot:"Ctrl+P\u3067\u5370\u5237 \u2014 \u81ea\u52d52\u30da\u30fc\u30b8\u76ee\u3002",
+        compact:"\u30b3\u30f3\u30d1\u30af\u30c8", shopAdd:"\u8ffd\u52a0",
+      },
+    };
+
+    const PROTOCOL = [
+      { step:"01", t:{
+        en:["HYDRATE","500ml sparkling water. Mechanical fullness. NOW."],
+        fr:["HYDRATE","500ml d\u2019eau gazeuse. Remplissage m\u00e9canique. MAINTENANT."],
+        es:["HIDRATA","500ml de agua con gas. Llenado mec\u00e1nico. AHORA."],
+        it:["IDRATA","500ml di acqua frizzante. Riempimento meccanico. ORA."],
+        ru:["\u041f\u0415\u0419","\u0412\u044b\u043f\u0435\u0439 500\u043c\u043b \u0433\u0430\u0437\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u043e\u0439 \u0432\u043e\u0434\u044b. \u041c\u0435\u0445\u0430\u043d\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u043d\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u0435. \u0421\u0415\u0419\u0427\u0410\u0421."],
+        jp:["\u6c34\u5206\u88dc\u7d66","\u70ad\u9178\u6c34500ml\u3002\u7269\u7406\u7684\u306a\u6e80\u8179\u611f\u3002\u4eca\u3059\u3050\u3002"],
+      }},
+      { step:"02", t:{
+        en:["WAIT","5 minutes. Let the hormones catch up. Don\u2019t move."],
+        fr:["ATTENDS","5 minutes. Laisse les hormones rattraper. Ne bouge pas."],
+        es:["ESPERA","5 minutos. Deja que las hormonas se activen. No te muevas."],
+        it:["ASPETTA","5 minuti. Lascia che gli ormoni raggiungano. Non muoverti."],
+        ru:["\u0416\u0414\u0418","5 \u043c\u0438\u043d\u0443\u0442. \u0414\u0430\u0439 \u0433\u043e\u0440\u043c\u043e\u043d\u0430\u043c \u0434\u043e\u0433\u043d\u0430\u0442\u044c. \u041d\u0435 \u0434\u0432\u0438\u0433\u0430\u0439\u0441\u044f."],
+        jp:["\u5f85\u3066","5\u5206\u3002\u30db\u30eb\u30e2\u30f3\u304c\u8ffd\u3044\u3064\u304f\u306e\u3092\u5f85\u3066\u3002\u52d5\u304f\u306a\u3002"],
+      }},
+      { step:"03", t:{
+        en:["DEPLOY","Still hungry? Pick a Swap from TIER 1. Execute."],
+        fr:["D\u00c9PLOIE","Toujours faim ? Choisis un Swap du NIVEAU 1. Ex\u00e9cute."],
+        es:["DESPLIEGA","\u00bfA\u00fan hambre? Elige un Swap del NIVEL 1. Ejecuta."],
+        it:["ESEGUI","Ancora fame? Scegli uno Swap dal LIVELLO 1. Esegui."],
+        ru:["\u0414\u0415\u0419\u0421\u0422\u0412\u0423\u0419","\u0412\u0441\u0451 \u0435\u0449\u0451 \u0433\u043e\u043b\u043e\u0434\u0435\u043d? \u0412\u044b\u0431\u0435\u0440\u0438 Swap \u0438\u0437 \u0423\u0420\u041e\u0412\u041d\u042f 1. \u0412\u044b\u043f\u043e\u043b\u043d\u044f\u0439."],
+        jp:["\u5b9f\u884c","\u307e\u3060\u7a7a\u8179\uff1f\u30c6\u30a3\u30a2 1\u304b\u3089Swap\u3092\u9078\u3079\u3002\u5b9f\u884c\u3002"],
+      }},
+    ];
+
+    const CAT_LABELS = {
+      "sweet-creamy":{ en:"Sweet & Creamy", fr:"Sweet & Creamy", es:"Dulce & Cremoso", it:"Dolce & Cremoso", ru:"\u0421\u043b\u0430\u0434\u043a\u043e\u0435 & \u041a\u0440\u0435\u043c\u043e\u0432\u043e\u0435", jp:"\u30b9\u30a4\u30fc\u30c8\uff06\u30af\u30ea\u30fc\u30df\u30fc" },
+      "salty-crunchy":{ en:"Salty & Crunchy", fr:"Salty & Crunchy", es:"Salado & Crujiente", it:"Salato & Croccante", ru:"\u0421\u043e\u043b\u0451\u043d\u043e\u0435 & \u0425\u0440\u0443\u0441\u0442\u044f\u0449\u0435\u0435", jp:"\u30bd\u30eb\u30c6\u30a3\uff06\u30af\u30e9\u30f3\u30c1\u30fc" },
+      "high-volume":{ en:"High Volume", fr:"High Volume", es:"Alto Volumen", it:"Alto Volume", ru:"\u0411\u043e\u043b\u044c\u0448\u043e\u0439 \u041e\u0431\u044a\u0451\u043c", jp:"\u30cf\u30a4\u30dc\u30ea\u30e5\u30fc\u30e0" },
+    };
+
+    /* Swaps: t = { lang: [craving, solution, qty] }, macros & score are universal */
+    const CATEGORIES = [
+      { slug:"sweet-creamy", swaps:[
+        { id:1, macros:"Cal: 130 | P: 35g | C: 12g | F: 2g", score:9, t:{
+          en:["Chocolate / Sweets","0% Greek Yogurt + Whey + Berries","250g"],
+          fr:["Chocolat / Sucreries","Fromage blanc 0% + Whey + Fruits rouges","250g"],
+          es:["Chocolate / Dulces","Yogur griego 0% + Whey + Frutos rojos","250g"],
+          it:["Cioccolato / Dolci","Yogurt greco 0% + Whey + Frutti di bosco","250g"],
+          ru:["\u0428\u043e\u043a\u043e\u043b\u0430\u0434 / \u0421\u043b\u0430\u0434\u043e\u0441\u0442\u0438","\u0422\u0432\u043e\u0440\u043e\u0433 0% + Whey + \u042f\u0433\u043e\u0434\u044b","250\u0433"],
+          jp:["\u30c1\u30e7\u30b3 / \u30b9\u30a4\u30fc\u30c4","\u7121\u8102\u80aa\u30e8\u30fc\u30b0\u30eb\u30c8 + \u30db\u30a8\u30a4 + \u30d9\u30ea\u30fc","250g"],
+        }},
+        { id:4, macros:"Cal: 110 | P: 25g | C: 5g | F: 0g", score:10, t:{
+          en:["Ice Cream","Protein Fluff (Casein + Xanthan + Diet soda)","500ml"],
+          fr:["Cr\u00e8me glac\u00e9e","Prot\u00e9ine Fluff (Cas\u00e9ine + Xanthane + Soda light)","500ml"],
+          es:["Helado","Protein Fluff (Case\u00edna + Xantano + Soda light)","500ml"],
+          it:["Gelato","Protein Fluff (Caseina + Xantano + Bibita light)","500ml"],
+          ru:["\u041c\u043e\u0440\u043e\u0436\u0435\u043d\u043e\u0435","\u041f\u0440\u043e\u0442\u0435\u0438\u043d \u0424\u043b\u0430\u0444\u0444 (\u041a\u0430\u0437\u0435\u0438\u043d + \u041a\u0441\u0430\u043d\u0442\u0430\u043d + \u0414\u0438\u0435\u0442. \u0433\u0430\u0437\u0438\u0440\u043e\u0432\u043a\u0430)","500\u043c\u043b"],
+          jp:["\u30a2\u30a4\u30b9\u30af\u30ea\u30fc\u30e0","\u30d7\u30ed\u30c6\u30a4\u30f3\u30d5\u30e9\u30d5 (\u30ab\u30bc\u30a4\u30f3 + \u30ad\u30b5\u30f3\u30bf\u30f3 + \u30bc\u30ed\u30bd\u30fc\u30c0)","500ml"],
+        }},
+        { id:10, macros:"Cal: 95 | P: 18g | C: 8g | F: 0g", score:8, t:{
+          en:["Cheesecake / Cake","Skyr \u2018Newstalgie\u2019 (Skyr + Cheesecake flavor)","200g"],
+          fr:["Cheesecake / G\u00e2teau","Skyr \u2018Newstalgie\u2019 (Skyr + Ar\u00f4me cheesecake)","200g"],
+          es:["Tarta de queso","Skyr \u2018Newstalgie\u2019 (Skyr + Sabor cheesecake)","200g"],
+          it:["Cheesecake / Torta","Skyr \u2018Newstalgie\u2019 (Skyr + Aroma cheesecake)","200g"],
+          ru:["\u0427\u0438\u0437\u043a\u0435\u0439\u043a / \u0422\u043e\u0440\u0442","Skyr \u2018Newstalgie\u2019 (Skyr + \u0412\u043a\u0443\u0441 \u0447\u0438\u0437\u043a\u0435\u0439\u043a\u0430)","200\u0433"],
+          jp:["\u30c1\u30fc\u30ba\u30b1\u30fc\u30ad","Skyr \u2018Newstalgie\u2019 (Skyr + \u30c1\u30fc\u30ba\u30b1\u30fc\u30ad\u5473)","200g"],
+        }},
+        { id:11, macros:"Cal: 95 | P: 1g | C: 25g | F: 5g", score:8, t:{
+          en:["Sweet / Crunchy","Fresh Apples (Soluble fibers)","2 units"],
+          fr:["Sucr\u00e9 / Crunchy","Pommes fra\u00eeches (Fibres solubles)","2 unit\u00e9s"],
+          es:["Dulce / Crujiente","Manzanas frescas (Fibras solubles)","2 unidades"],
+          it:["Dolce / Croccante","Mele fresche (Fibre solubili)","2 unit\u00e0"],
+          ru:["\u0421\u043b\u0430\u0434\u043a\u043e\u0435 / \u0425\u0440\u0443\u0441\u0442\u044f\u0449\u0435\u0435","\u0421\u0432\u0435\u0436\u0438\u0435 \u044f\u0431\u043b\u043e\u043a\u0438 (\u0420\u0430\u0441\u0442\u0432\u043e\u0440. \u043a\u043b\u0435\u0442\u0447\u0430\u0442\u043a\u0430)","2 \u0448\u0442."],
+          jp:["\u7518\u3044 / \u30ab\u30ea\u30ab\u30ea","\u65b0\u9bae\u306a\u30ea\u30f3\u30b4 (\u6c34\u6eb6\u6027\u98df\u7269\u7e4a\u7dad)","2\u500b"],
+        }},
+        { id:12, macros:"Cal: 95 | P: 8g | C: 12g | F: 3g", score:8, t:{
+          en:["Brownie / Chocolate","Zucchini Mug Brownie","1 mug"],
+          fr:["Brownie / Chocolat","Mug Brownie Courgette","1 mug"],
+          es:["Brownie / Chocolate","Mug Brownie de Calabac\u00edn","1 taza"],
+          it:["Brownie / Cioccolato","Mug Brownie Zucchine","1 tazza"],
+          ru:["\u0411\u0440\u0430\u0443\u043d\u0438 / \u0428\u043e\u043a\u043e\u043b\u0430\u0434","\u041c\u0430\u0433 \u0411\u0440\u0430\u0443\u043d\u0438 \u0441 \u043a\u0430\u0431\u0430\u0447\u043a\u043e\u043c","1 \u043a\u0440\u0443\u0436\u043a\u0430"],
+          jp:["\u30d6\u30e9\u30a6\u30cb\u30fc / \u30c1\u30e7\u30b3","\u30ba\u30c3\u30ad\u30fc\u30cb \u30de\u30b0\u30d6\u30e9\u30a6\u30cb\u30fc","1\u30de\u30b0"],
+        }},
+        { id:17, macros:"Cal: 80 | P: 20g | C: 10g | F: 4g", score:8, t:{
+          en:["Sorbet / Yogurt","Raspberry Mousse (Frozen berries + Whey)","1 large bowl"],
+          fr:["Sorbet / Yogourt","Mousse Framboise (Fruits congel\u00e9s + Whey)","1 grand bol"],
+          es:["Sorbete / Yogur","Mousse de Frambuesa (Congelados + Whey)","1 bol grande"],
+          it:["Sorbetto / Yogurt","Mousse Lampone (Surgelati + Whey)","1 ciotola"],
+          ru:["\u0421\u043e\u0440\u0431\u0435\u0442 / \u0419\u043e\u0433\u0443\u0440\u0442","\u041c\u0430\u043b\u0438\u043d\u043e\u0432\u044b\u0439 \u043c\u0443\u0441\u0441 (\u0417\u0430\u043c\u043e\u0440\u043e\u0436. + Whey)","1 \u0431\u043e\u043b. \u043c\u0438\u0441\u043a\u0430"],
+          jp:["\u30bd\u30eb\u30d9 / \u30e8\u30fc\u30b0\u30eb\u30c8","\u30e9\u30ba\u30d9\u30ea\u30fc\u30e0\u30fc\u30b9 (\u51b7\u51cd + \u30db\u30a8\u30a4)","1\u5927\u30dc\u30a6\u30eb"],
+        }},
+      ]},
+      { slug:"salty-crunchy", swaps:[
+        { id:2, macros:"Cal: 160 | P: 28g | C: 2g | F: 1g", score:8, t:{
+          en:["Salty Snack / Deli","Hard-boiled Eggs + Lean Ham + Pickles","2 eggs + 2 sl."],
+          fr:["Snack Sal\u00e9 / Charcuterie","\u0152ufs durs + Jambon blanc + Cornichons","2 \u0153ufs + 2 tr."],
+          es:["Snack Salado / Embutido","Huevos duros + Jam\u00f3n cocido + Pepinillos","2 huevos + 2 lon."],
+          it:["Snack Salato / Salumi","Uova sode + Prosciutto cotto + Cetriolini","2 uova + 2 fette"],
+          ru:["\u0421\u043e\u043b\u0451\u043d\u044b\u0439 \u0441\u043d\u044d\u043a","\u0412\u0430\u0440\u0451\u043d\u044b\u0435 \u044f\u0439\u0446\u0430 + \u0412\u0435\u0442\u0447\u0438\u043d\u0430 + \u041a\u043e\u0440\u043d\u0438\u0448\u043e\u043d\u044b","2 \u044f\u0439\u0446\u0430 + 2 \u043b\u043e\u043c."],
+          jp:["\u5869\u5473\u30b9\u30ca\u30c3\u30af","\u3086\u3067\u5375 + \u30ed\u30fc\u30b9\u30cf\u30e0 + \u30d4\u30af\u30eb\u30b9","\u53542\u500b + 2\u679a"],
+        }},
+        { id:9, macros:"Cal: 45 | P: 3g | C: 5g | F: 2g", score:8, t:{
+          en:["Classic Chips","Air-Kale \u2018Doritos\u2019 (Kale, olive spray, yeast)","1 large bowl"],
+          fr:["Chips classiques","Air-Kale \u2018Doritos\u2019 (Kale, spray olive, levure)","1 grand bol"],
+          es:["Chips cl\u00e1sicas","Air-Kale \u2018Doritos\u2019 (Col rizada, spray oliva, levadura)","1 bol grande"],
+          it:["Chips classiche","Air-Kale \u2018Doritos\u2019 (Cavolo riccio, spray oliva, lievito)","1 ciotola"],
+          ru:["\u0427\u0438\u043f\u0441\u044b","Air-Kale \u2018Doritos\u2019 (\u041a\u0435\u0439\u043b, \u0441\u043f\u0440\u0435\u0439 \u043e\u043b\u0438\u0432\u0430, \u0434\u0440\u043e\u0436\u0436\u0438)","1 \u0431\u043e\u043b. \u043c\u0438\u0441\u043a\u0430"],
+          jp:["\u30c1\u30c3\u30d7\u30b9","Air-Kale \u2018Doritos\u2019 (\u30b1\u30fc\u30eb, \u30aa\u30ea\u30fc\u30d6\u30b9\u30d7\u30ec\u30fc, \u9175\u6bcd)","1\u5927\u30dc\u30a6\u30eb"],
+        }},
+        { id:13, macros:"Cal: 90 | P: 3g | C: 15g | F: 4g", score:7, t:{
+          en:["Party Snacks","Dopamine Popcorn (Air, yeast, black salt)","1 large bowl"],
+          fr:["Biscuits ap\u00e9ro","Popcorn \u2018Dopamine\u2019 (Air, levure, sel noir)","1 grand bol"],
+          es:["Snacks de fiesta","Popcorn \u2018Dopamina\u2019 (Aire, levadura, sal negra)","1 bol grande"],
+          it:["Snack da festa","Popcorn \u2018Dopamina\u2019 (Aria, lievito, sale nero)","1 ciotola"],
+          ru:["\u0421\u043d\u044d\u043a\u0438 \u043a \u043f\u0438\u0432\u0443","\u041f\u043e\u043f\u043a\u043e\u0440\u043d \u2018\u0414\u043e\u0444\u0430\u043c\u0438\u043d\u2019 (\u0412\u043e\u0437\u0434\u0443\u0448\u043d\u044b\u0439, \u0434\u0440\u043e\u0436\u0436\u0438, \u0447\u0451\u0440\u043d. \u0441\u043e\u043b\u044c)","1 \u0431\u043e\u043b. \u043c\u0438\u0441\u043a\u0430"],
+          jp:["\u30d1\u30fc\u30c6\u30a3\u30fc\u30b9\u30ca\u30c3\u30af","\u30c9\u30fc\u30d1\u30df\u30f3\u30dd\u30c3\u30d7\u30b3\u30fc\u30f3 (\u30a8\u30a2, \u9175\u6bcd, \u9ed2\u5869)","1\u5927\u30dc\u30a6\u30eb"],
+        }},
+        { id:14, macros:"Cal: 85 | P: 4g | C: 8g | F: 5g", score:8, t:{
+          en:["Tortillas & Dip","Endives + Faux-Camole (Avocado + Peas)","1 bowl"],
+          fr:["Tortillas & Dip","Endives + Faux-Camole (Avocat + Petits pois)","1 bol"],
+          es:["Tortillas & Dip","Endivias + Faux-Camole (Aguacate + Guisantes)","1 bol"],
+          it:["Tortillas & Dip","Indivia + Faux-Camole (Avocado + Piselli)","1 ciotola"],
+          ru:["\u0422\u043e\u0440\u0442\u0438\u043b\u044c\u0438 & \u0414\u0438\u043f","\u042d\u043d\u0434\u0438\u0432\u0438\u0439 + Faux-Camole (\u0410\u0432\u043e\u043a\u0430\u0434\u043e + \u0413\u043e\u0440\u043e\u0448\u0435\u043a)","1 \u043c\u0438\u0441\u043a\u0430"],
+          jp:["\u30c8\u30eb\u30c6\u30a3\u30fc\u30e4 & \u30c7\u30a3\u30c3\u30d7","\u30a8\u30f3\u30c0\u30a4\u30d6 + Faux-Camole (\u30a2\u30dc\u30ab\u30c9 + \u30b0\u30ea\u30fc\u30f3\u30d4\u30fc\u30b9)","1\u30dc\u30a6\u30eb"],
+        }},
+        { id:15, macros:"Cal: 95 | P: 9g | C: 5g | F: 4g", score:7, t:{
+          en:["Peanuts / Fat","Fleur de Sel Edamame","100g"],
+          fr:["Cacahu\u00e8tes / Gras","Edamame Fleur de Sel","100g"],
+          es:["Cacahuetes / Grasa","Edamame Flor de Sal","100g"],
+          it:["Arachidi / Grasso","Edamame Fior di Sale","100g"],
+          ru:["\u0410\u0440\u0430\u0445\u0438\u0441 / \u0416\u0438\u0440\u043d\u043e\u0435","\u042d\u0434\u0430\u043c\u0430\u043c\u044d \u0424\u043b\u0451\u0440 \u0434\u0435 \u0421\u0435\u043b\u044c","100\u0433"],
+          jp:["\u30d4\u30fc\u30ca\u30c3\u30c4 / \u8102\u8cea","\u30d5\u30eb\u30fc\u30eb\u30fb\u30c9\u30fb\u30bb\u30eb \u679d\u8c46","100g"],
+        }},
+        { id:16, macros:"Cal: 20 | P: 1g | C: 4g | F: 2g", score:7, t:{
+          en:["Spicy Snack","Taj\u00edn Radish Crunch (Lime juice)","200g"],
+          fr:["Snack \u00e9pic\u00e9","Radis Crunch Taj\u00edn (Jus de citron)","200g"],
+          es:["Snack picante","R\u00e1banos Crunch Taj\u00edn (Lim\u00f3n)","200g"],
+          it:["Snack piccante","Ravanelli Crunch Taj\u00edn (Succo di lime)","200g"],
+          ru:["\u041e\u0441\u0442\u0440\u044b\u0439 \u0441\u043d\u044d\u043a","\u0420\u0435\u0434\u0438\u0441 Crunch Taj\u00edn (\u0421\u043e\u043a \u043b\u0430\u0439\u043c\u0430)","200\u0433"],
+          jp:["\u30b9\u30d1\u30a4\u30b7\u30fc\u30b9\u30ca\u30c3\u30af","\u30bf\u30d2\u30f3 \u30e9\u30c7\u30a3\u30c3\u30b7\u30e5\u30af\u30e9\u30f3\u30c1 (\u30e9\u30a4\u30e0\u679c\u6c41)","200g"],
+        }},
+      ]},
+      { slug:"high-volume", swaps:[
+        { id:3, macros:"Cal: 110 | P: 2g | C: 24g | F: 2g", score:10, t:{
+          en:["Carbs / Fries","Steamed potatoes (cooled down)","150g"],
+          fr:["F\u00e9culents / Frites","Pommes de terre vapeur (refroidies)","150g"],
+          es:["Carbos / Papas fritas","Patatas al vapor (enfriadas)","150g"],
+          it:["Carboidrati / Patatine","Patate al vapore (raffreddate)","150g"],
+          ru:["\u0423\u0433\u043b\u0435\u0432\u043e\u0434\u044b / \u041a\u0430\u0440\u0442\u043e\u0448\u043a\u0430","\u041a\u0430\u0440\u0442\u043e\u0444\u0435\u043b\u044c \u043d\u0430 \u043f\u0430\u0440\u0443 (\u043e\u0445\u043b\u0430\u0436\u0434\u0451\u043d\u043d\u044b\u0439)","150\u0433"],
+          jp:["\u70ad\u6c34\u5316\u7269 / \u30d5\u30e9\u30a4\u30c9\u30dd\u30c6\u30c8","\u84b8\u3057\u3058\u3083\u304c\u3044\u3082 (\u51b7\u307e\u3057\u305f\u3082\u306e)","150g"],
+        }},
+        { id:5, macros:"Cal: 45 | P: 2g | C: 8g | F: 5g", score:10, t:{
+          en:["Extreme Hunger","Konjac Mousse (Shirataki + Mushrooms)","350ml"],
+          fr:["Grosse faim (Volume)","Mousse de Konjac (Shirataki + Champignons)","350ml"],
+          es:["Hambre extrema","Mousse de Konjac (Shirataki + Champi\u00f1ones)","350ml"],
+          it:["Fame estrema","Mousse di Konjac (Shirataki + Funghi)","350ml"],
+          ru:["\u0421\u0438\u043b\u044c\u043d\u044b\u0439 \u0433\u043e\u043b\u043e\u0434","\u041c\u0443\u0441\u0441 \u0438\u0437 \u043a\u043e\u043d\u0436\u0430\u043a\u0430 (\u0428\u0438\u0440\u0430\u0442\u0430\u043a\u0438 + \u0413\u0440\u0438\u0431\u044b)","350\u043c\u043b"],
+          jp:["\u6975\u5ea6\u306e\u7a7a\u8179","\u3053\u3093\u306b\u3083\u304f\u30e0\u30fc\u30b9 (\u3057\u3089\u305f\u304d + \u304d\u306e\u3053)","350ml"],
+        }},
+        { id:6, macros:"Cal: 120 | P: 22g | C: 0g | F: 0g", score:9, t:{
+          en:["Heavy Meal / Meat","White fish (Cod / Ling)","150g"],
+          fr:["Plat lourd / Viande","Poisson blanc (Cabillaud / Ling)","150g"],
+          es:["Plato pesado / Carne","Pescado blanco (Bacalao / Merluza)","150g"],
+          it:["Piatto pesante / Carne","Pesce bianco (Merluzzo / Nasello)","150g"],
+          ru:["\u0422\u044f\u0436\u0451\u043b\u043e\u0435 \u0431\u043b\u044e\u0434\u043e / \u041c\u044f\u0441\u043e","\u0411\u0435\u043b\u0430\u044f \u0440\u044b\u0431\u0430 (\u0422\u0440\u0435\u0441\u043a\u0430 / \u041b\u0438\u043d\u0433)","150\u0433"],
+          jp:["\u91cd\u3044\u98df\u4e8b / \u8089","\u767d\u8eab\u9b5a (\u30bf\u30e9 / \u30ea\u30f3\u30b0)","150g"],
+        }},
+        { id:7, macros:"Cal: 80 | P: 5g | C: 10g | F: 4g", score:9, t:{
+          en:["Night Cravings / Soup","Cruciferous Broth (Cauliflower + Broth)","500ml"],
+          fr:["Fringale de soir / Soupe","Bouillon de Crucif\u00e8res (Chou-fleur + Bouillon)","500ml"],
+          es:["Antojos nocturnos / Sopa","Caldo de Cruc\u00edferas (Coliflor + Caldo)","500ml"],
+          it:["Voglie notturne / Zuppa","Brodo di Crucifere (Cavolfiore + Brodo)","500ml"],
+          ru:["\u0412\u0435\u0447\u0435\u0440\u043d\u0438\u0439 \u0433\u043e\u043b\u043e\u0434 / \u0421\u0443\u043f","\u041a\u0440\u0435\u0441\u0442\u043e\u0446\u0432\u0435\u0442\u043d\u044b\u0439 \u0431\u0443\u043b\u044c\u043e\u043d (\u0426\u0432. \u043a\u0430\u043f\u0443\u0441\u0442\u0430 + \u0411\u0443\u043b\u044c\u043e\u043d)","500\u043c\u043b"],
+          jp:["\u591c\u306e\u7a7a\u8179 / \u30b9\u30fc\u30d7","\u30a2\u30d6\u30e9\u30ca\u79d1\u30d6\u30ed\u30b9 (\u30ab\u30ea\u30d5\u30e9\u30ef\u30fc + \u30d6\u30ed\u30b9)","500ml"],
+        }},
+        { id:8, macros:"Cal: 85 | P: 20g | C: 3g | F: 1g", score:9, t:{
+          en:["Protein Meal / Hunger","Air Omelette (Egg whites + Peppers)","300ml"],
+          fr:["Plat prot\u00e9in\u00e9 / Fringale","Omelette d\u2019Air (Blancs d\u2019\u0153ufs + Poivrons)","300ml"],
+          es:["Comida proteica / Hambre","Omelette de Aire (Claras + Pimientos)","300ml"],
+          it:["Pasto proteico / Fame","Omelette d\u2019Aria (Albumi + Peperoni)","300ml"],
+          ru:["\u0411\u0435\u043b\u043a\u043e\u0432\u043e\u0435 \u0431\u043b\u044e\u0434\u043e","\u0412\u043e\u0437\u0434\u0443\u0448\u043d\u044b\u0439 \u043e\u043c\u043b\u0435\u0442 (\u0411\u0435\u043b\u043a\u0438 + \u041f\u0435\u0440\u0446\u044b)","300\u043c\u043b"],
+          jp:["\u30d7\u30ed\u30c6\u30a4\u30f3\u98df / \u7a7a\u8179","\u30a8\u30a2\u30aa\u30e0\u30ec\u30c4 (\u5375\u767d + \u30d1\u30d7\u30ea\u30ab)","300ml"],
+        }},
+      ]},
+    ];
+
+    const INGREDIENTS = {
+      1:{ en:["0% Greek yogurt","Whey protein","Berries (fresh/frozen)"], fr:["Fromage blanc 0%","Whey prot\u00e9ine","Fruits rouges (frais/congel\u00e9s)"], es:["Yogur griego 0%","Prote\u00edna whey","Frutos rojos"], it:["Yogurt greco 0%","Proteina whey","Frutti di bosco"], ru:["\u0422\u0432\u043e\u0440\u043e\u0433 0%","\u0421\u044b\u0432\u043e\u0440\u043e\u0442\u043e\u0447\u043d\u044b\u0439 \u043f\u0440\u043e\u0442\u0435\u0438\u043d","\u042f\u0433\u043e\u0434\u044b"], jp:["\u7121\u8102\u80aa\u30e8\u30fc\u30b0\u30eb\u30c8","\u30db\u30a8\u30a4\u30d7\u30ed\u30c6\u30a4\u30f3","\u30d9\u30ea\u30fc"] },
+      4:{ en:["Casein powder","Xanthan gum","Diet soda"], fr:["Cas\u00e9ine (poudre)","Gomme xanthane","Soda light/z\u00e9ro"], es:["Case\u00edna","Goma xantana","Refresco light"], it:["Caseina","Gomma xantana","Bibita light"], ru:["\u041a\u0430\u0437\u0435\u0438\u043d","\u041a\u0441\u0430\u043d\u0442\u0430\u043d\u043e\u0432\u0430\u044f \u043a\u0430\u043c\u0435\u0434\u044c","\u0414\u0438\u0435\u0442. \u0433\u0430\u0437\u0438\u0440\u043e\u0432\u043a\u0430"], jp:["\u30ab\u30bc\u30a4\u30f3","\u30ad\u30b5\u30f3\u30bf\u30f3\u30ac\u30e0","\u30c0\u30a4\u30a8\u30c3\u30c8\u30bd\u30fc\u30c0"] },
+      10:{ en:["Plain Skyr","Cheesecake flavor"], fr:["Skyr nature","Ar\u00f4me cheesecake"], es:["Skyr natural","Sabor cheesecake"], it:["Skyr naturale","Aroma cheesecake"], ru:["\u0421\u043a\u0438\u0440 \u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u044b\u0439","\u0410\u0440\u043e\u043c\u0430\u0442\u0438\u0437\u0430\u0442\u043e\u0440 \u0447\u0438\u0437\u043a\u0435\u0439\u043a"], jp:["\u30d7\u30ec\u30fc\u30f3\u30b9\u30ad\u30fc\u30eb","\u30c1\u30fc\u30ba\u30b1\u30fc\u30ad\u30d5\u30ec\u30fc\u30d0\u30fc"] },
+      11:{ en:["Apples (2)"], fr:["Pommes (2)"], es:["Manzanas (2)"], it:["Mele (2)"], ru:["\u042f\u0431\u043b\u043e\u043a\u0438 (2)"], jp:["\u30ea\u30f3\u30b4 (2\u500b)"] },
+      12:{ en:["Zucchini","Cocoa powder","Whey","1 egg"], fr:["Courgette","Cacao en poudre","Whey","1 \u0153uf"], es:["Calabac\u00edn","Cacao en polvo","Whey","1 huevo"], it:["Zucchina","Cacao in polvere","Whey","1 uovo"], ru:["\u041a\u0430\u0431\u0430\u0447\u043e\u043a","\u041a\u0430\u043a\u0430\u043e","Whey","1 \u044f\u0439\u0446\u043e"], jp:["\u30ba\u30c3\u30ad\u30fc\u30cb","\u30b3\u30b3\u30a2\u30d1\u30a6\u30c0\u30fc","\u30db\u30a8\u30a4","\u53611\u500b"] },
+      17:{ en:["Frozen raspberries","Whey protein"], fr:["Framboises congel\u00e9es","Whey prot\u00e9ine"], es:["Frambuesas congeladas","Prote\u00edna whey"], it:["Lamponi surgelati","Proteina whey"], ru:["\u0417\u0430\u043c\u043e\u0440\u043e\u0436. \u043c\u0430\u043b\u0438\u043d\u0430","\u0421\u044b\u0432\u043e\u0440\u043e\u0442\u043e\u0447\u043d\u044b\u0439 \u043f\u0440\u043e\u0442\u0435\u0438\u043d"], jp:["\u51b7\u51cd\u30e9\u30ba\u30d9\u30ea\u30fc","\u30db\u30a8\u30a4\u30d7\u30ed\u30c6\u30a4\u30f3"] },
+      2:{ en:["Eggs (2)","Lean ham (2 sl.)","Pickles"], fr:["\u0152ufs (2)","Jambon blanc (2 tr.)","Cornichons"], es:["Huevos (2)","Jam\u00f3n cocido (2 lon.)","Pepinillos"], it:["Uova (2)","Prosciutto cotto (2 fette)","Cetriolini"], ru:["\u042f\u0439\u0446\u0430 (2)","\u0412\u0435\u0442\u0447\u0438\u043d\u0430 (2 \u043b\u043e\u043c.)","\u041a\u043e\u0440\u043d\u0438\u0448\u043e\u043d\u044b"], jp:["\u5375 (2\u500b)","\u30ed\u30fc\u30b9\u30cf\u30e0 (2\u679a)","\u30d4\u30af\u30eb\u30b9"] },
+      9:{ en:["Kale","Olive oil spray","Nutritional yeast"], fr:["Kale (chou fris\u00e9)","Spray huile olive","Levure malt\u00e9e"], es:["Col rizada","Spray de oliva","Levadura nutricional"], it:["Cavolo riccio","Spray olio d'oliva","Lievito alimentare"], ru:["\u041a\u0435\u0439\u043b","\u0421\u043f\u0440\u0435\u0439 \u043e\u043b\u0438\u0432\u043a\u043e\u0432\u043e\u0433\u043e \u043c\u0430\u0441\u043b\u0430","\u041f\u0438\u0449\u0435\u0432\u044b\u0435 \u0434\u0440\u043e\u0436\u0436\u0438"], jp:["\u30b1\u30fc\u30eb","\u30aa\u30ea\u30fc\u30d6\u30aa\u30a4\u30eb\u30b9\u30d7\u30ec\u30fc","\u30cb\u30e5\u30fc\u30c8\u30ea\u30b7\u30e7\u30ca\u30eb\u30a4\u30fc\u30b9\u30c8"] },
+      13:{ en:["Popcorn kernels","Nutritional yeast","Black salt"], fr:["Ma\u00efs \u00e0 \u00e9clater","Levure malt\u00e9e","Sel noir"], es:["Ma\u00edz para palomitas","Levadura nutricional","Sal negra"], it:["Mais per popcorn","Lievito alimentare","Sale nero"], ru:["\u041a\u0443\u043a\u0443\u0440\u0443\u0437\u0430 \u0434\u043b\u044f \u043f\u043e\u043f\u043a\u043e\u0440\u043d\u0430","\u041f\u0438\u0449\u0435\u0432\u044b\u0435 \u0434\u0440\u043e\u0436\u0436\u0438","\u0427\u0451\u0440\u043d\u0430\u044f \u0441\u043e\u043b\u044c"], jp:["\u30dd\u30c3\u30d7\u30b3\u30fc\u30f3\u8c46","\u30cb\u30e5\u30fc\u30c8\u30ea\u30b7\u30e7\u30ca\u30eb\u30a4\u30fc\u30b9\u30c8","\u9ed2\u5869"] },
+      14:{ en:["Endives","Avocado","Peas (frozen)"], fr:["Endives","Avocat","Petits pois (surgel\u00e9s)"], es:["Endivias","Aguacate","Guisantes (congelados)"], it:["Indivia","Avocado","Piselli (surgelati)"], ru:["\u042d\u043d\u0434\u0438\u0432\u0438\u0439","\u0410\u0432\u043e\u043a\u0430\u0434\u043e","\u0413\u043e\u0440\u043e\u0448\u0435\u043a (\u0437\u0430\u043c\u043e\u0440\u043e\u0436.)"], jp:["\u30a8\u30f3\u30c0\u30a4\u30d6","\u30a2\u30dc\u30ab\u30c9","\u30b0\u30ea\u30fc\u30f3\u30d4\u30fc\u30b9 (\u51b7\u51cd)"] },
+      15:{ en:["Edamame (frozen)","Fleur de sel"], fr:["Edamame (surgel\u00e9s)","Fleur de sel"], es:["Edamame (congelados)","Flor de sal"], it:["Edamame (surgelati)","Fior di sale"], ru:["\u042d\u0434\u0430\u043c\u0430\u043c\u044d (\u0437\u0430\u043c\u043e\u0440\u043e\u0436.)","\u0424\u043b\u0451\u0440 \u0434\u0435 \u0441\u0435\u043b\u044c"], jp:["\u679d\u8c46 (\u51b7\u51cd)","\u30d5\u30eb\u30fc\u30eb\u30fb\u30c9\u30fb\u30bb\u30eb"] },
+      16:{ en:["Radishes","Taj\u00edn (or chili)","Lime"], fr:["Radis","Taj\u00edn (ou piment)","Citron"], es:["R\u00e1banos","Taj\u00edn (o chile)","Lim\u00f3n"], it:["Ravanelli","Taj\u00edn (o peperoncino)","Lime"], ru:["\u0420\u0435\u0434\u0438\u0441","Taj\u00edn (\u0438\u043b\u0438 \u043f\u0435\u0440\u0435\u0446)","\u041b\u0430\u0439\u043c"], jp:["\u30e9\u30c7\u30a3\u30c3\u30b7\u30e5","\u30bf\u30d2\u30f3 (\u307e\u305f\u306f\u30c1\u30ea)","\u30e9\u30a4\u30e0"] },
+      3:{ en:["Small potatoes"], fr:["Pommes de terre (petites)"], es:["Patatas peque\u00f1as"], it:["Patate piccole"], ru:["\u041c\u0435\u043b\u043a\u0438\u0439 \u043a\u0430\u0440\u0442\u043e\u0444\u0435\u043b\u044c"], jp:["\u5c0f\u3055\u3044\u3058\u3083\u304c\u3044\u3082"] },
+      5:{ en:["Shirataki noodles","Mushrooms"], fr:["Nouilles Shirataki","Champignons"], es:["Fideos Shirataki","Champi\u00f1ones"], it:["Noodle Shirataki","Funghi"], ru:["\u041b\u0430\u043f\u0448\u0430 \u0428\u0438\u0440\u0430\u0442\u0430\u043a\u0438","\u0413\u0440\u0438\u0431\u044b"], jp:["\u3057\u3089\u305f\u304d","\u304d\u306e\u3053"] },
+      6:{ en:["White fish (Cod)"], fr:["Poisson blanc (Cabillaud)"], es:["Pescado blanco (Bacalao)"], it:["Pesce bianco (Merluzzo)"], ru:["\u0411\u0435\u043b\u0430\u044f \u0440\u044b\u0431\u0430 (\u0422\u0440\u0435\u0441\u043a\u0430)"], jp:["\u767d\u8eab\u9b5a (\u30bf\u30e9)"] },
+      7:{ en:["Cauliflower","Broth (cube/liquid)"], fr:["Chou-fleur","Bouillon (cube/liquide)"], es:["Coliflor","Caldo (cubo/l\u00edquido)"], it:["Cavolfiore","Brodo (cubo/liquido)"], ru:["\u0426\u0432\u0435\u0442\u043d\u0430\u044f \u043a\u0430\u043f\u0443\u0441\u0442\u0430","\u0411\u0443\u043b\u044c\u043e\u043d"], jp:["\u30ab\u30ea\u30d5\u30e9\u30ef\u30fc","\u30d6\u30ed\u30b9"] },
+      8:{ en:["Egg whites (4\u20135)","Bell peppers"], fr:["Blancs d\u2019\u0153ufs (4\u20135)","Poivrons"], es:["Claras de huevo (4\u20135)","Pimientos"], it:["Albumi d\u2019uovo (4\u20135)","Peperoni"], ru:["\u0411\u0435\u043b\u043a\u0438 (4\u20135)","\u041f\u0435\u0440\u0446\u044b"], jp:["\u5375\u767d (4\u301c5\u500b)","\u30d1\u30d7\u30ea\u30ab"] },
+    };
+
+    /* ═══ STATE ═══ */
+    let lang = 'fr', mult = 1, theme = 'swiss', isCompact = false;
+
+    /* ═══ HELPERS ═══ */
+    function esc(s) { const e = document.createElement('span'); e.textContent = s; return e.innerHTML; }
+    function today() {
+      const loc = { en:'en-US', fr:'fr-FR', es:'es-ES', it:'it-IT', ru:'ru-RU', jp:'ja-JP' };
+      return new Date().toLocaleDateString(loc[lang]||'en-US',{ year:'numeric', month:'long', day:'numeric' });
+    }
+    function scaleNumbers(str, f) {
+      return str.replace(/(\d+(?:\.\d+)?)/g, m => {
+        const v = parseFloat(m)*f;
+        return Number.isInteger(v) ? String(v) : v.toFixed(1).replace(/\.0$/,'');
+      });
+    }
+    function scoreBar(n) {
+      let h = '<div class="flex gap-[3px] items-end" title="'+n+'/10">';
+      for (let i = 1; i <= 10; i++) {
+        const on = i <= n;
+        h += '<div class="w-[3px] rounded-sm '+(on?'bar-filled h-[14px]':'bar-empty h-[10px]')+'" style="background:var('+(on?'--c-bar-on':'--c-bar-off')+')"></div>';
+      }
+      return h+'</div>';
+    }
+    const GRID = "grid-template-columns:1.1fr 1.6fr 0.55fr 1.5fr 54px 24px;";
+
+    /* Flatten all swaps, separating Tier 1 and Tier 2 */
+    function getTier1Swaps() {
+      const all = [];
+      CATEGORIES.forEach(cat => cat.swaps.forEach(s => { if (TIER1_IDS.includes(s.id)) all.push(s); }));
+      return all;
+    }
+    function getTier2Categories() {
+      return CATEGORIES.map(cat => ({
+        ...cat,
+        swaps: cat.swaps.filter(s => !TIER1_IDS.includes(s.id))
+      })).filter(cat => cat.swaps.length > 0);
+    }
+
+    /* ═══ RENDERER ═══ */
+    function render() {
+      const m = META[lang]||META.en;
+      document.documentElement.lang = lang==='jp'?'ja':lang;
+      document.getElementById('hero-title').innerText = m.heroTitle;
+      document.getElementById('subtitle').innerText = m.subtitle;
+      document.getElementById('badge-text').textContent = m.badge;
+      document.getElementById('edit-hint').textContent = m.editHint;
+      document.getElementById('mult-label').textContent = m.multLbl;
+      document.getElementById('shop-label').textContent = m.shopBtn;
+      document.getElementById('compact-label').textContent = m.compact;
+
+      /* Cost of Failure */
+      document.getElementById('cost-section').innerHTML = `
+        <div class="flex items-center gap-3 mb-1">
+          <span class="text-lg font-black">&#x26A0;</span>
+          <h2 class="text-[11px] font-black uppercase tracking-[0.2em]">${esc(m.costTitle)}</h2>
+        </div>
+        <p class="text-[12px] font-bold leading-relaxed opacity-90">${m.costItems.map(i => esc(i)).join(' &nbsp; ')}</p>`;
+
+      /* Protocol — Massive Typography */
+      document.getElementById('protocol-body').innerHTML = PROTOCOL.map(p => {
+        const c = p.t[lang]||p.t.en;
+        return `
+          <div class="flex flex-col gap-2">
+            <span class="hero-step mn select-none" style="color:var(--c-accent);">${p.step}</span>
+            <h3 contenteditable="true" class="editable-cell hero-label hd">${esc(c[0])}</h3>
+            <p contenteditable="true" class="editable-cell hero-desc tm leading-relaxed">${esc(c[1])}</p>
+          </div>`;
+      }).join('');
+
+      /* Tier 1 — Emergency Defense (3 giant cards) */
+      document.getElementById('tier1-label').textContent = m.tier1Label;
+      const t1 = getTier1Swaps();
+      document.getElementById('tier1-root').innerHTML = t1.map(s => {
+        const c = s.t[lang]||s.t.en;
+        const qty = scaleNumbers(c[2], mult);
+        const mac = scaleNumbers(s.macros, mult);
+        return `
+          <div data-row data-id="${s.id}" class="tier1-card flex flex-col gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="tier1-accent">${esc(m.tier1Tag)}</span>
+              <div class="flex items-center gap-2">
+                ${scoreBar(s.score)}
+                <button class="row-del no-print text-sm" onclick="delRow(this)">&times;</button>
+              </div>
+            </div>
+            <h3 contenteditable="true" class="editable-cell tier1-name text-lg font-black uppercase tracking-tight hd">${esc(c[1])}</h3>
+            <p contenteditable="true" class="editable-cell text-[11px] tm">${esc(c[0])}</p>
+            <div class="flex flex-wrap gap-2 mn text-[10px] mt-auto">
+              <span class="rounded px-2 py-1 font-bold" style="border:var(--border-w) var(--border-s) var(--c-border);">
+                <span contenteditable="true" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span>
+              </span>
+              <span class="rounded px-2 py-1 tm" style="border:var(--border-w) var(--border-s) var(--c-border);">
+                <span contenteditable="true" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span>
+              </span>
+            </div>
+          </div>`;
+      }).join('');
+
+      /* Tier 2 — Reinforcements (categorized table) */
+      document.getElementById('tier2-label').textContent = m.tier2Label;
+      const hdrs = m.cols;
+      const t2cats = getTier2Categories();
+      document.getElementById('categories-root').innerHTML = t2cats.map(cat => {
+        const cl = (CAT_LABELS[cat.slug]||{})[lang]||CAT_LABELS[cat.slug].en;
+        const rows = cat.swaps.map((s,i) => {
+          const c = s.t[lang]||s.t.en;
+          const alt = i%2!==0 ? 'background:var(--c-row-alt);' : '';
+          const qty = scaleNumbers(c[2], mult);
+          const mac = scaleNumbers(s.macros, mult);
+          return `
+            <div data-row data-id="${s.id}">
+              <div class="hidden md:grid gap-px items-center py-print" style="border-bottom:1px solid var(--c-border);${alt}${GRID}">
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] font-semibold">${esc(c[0])}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] tm">${esc(c[1])}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell mn text-[10px] font-medium tm" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell mn text-[10px] font-medium tm" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></div>
+                <div class="px-3 py-2.5 flex items-center">${scoreBar(s.score)}</div>
+                <div class="flex items-center justify-center no-print"><button class="row-del" onclick="delRow(this)">&times;</button></div>
+              </div>
+              <div class="md:hidden px-4 py-3 space-y-2" style="border-bottom:1px solid var(--c-border);${alt}">
+                <div class="flex items-center justify-between gap-2">
+                  <span contenteditable="true" class="editable-cell text-[13px] font-semibold">${esc(c[0])}</span>
+                  <div class="flex items-center gap-3">
+                    <div class="shrink-0">${scoreBar(s.score)}</div>
+                    <button class="row-del no-print text-sm" onclick="delRow(this)">&times;</button>
+                  </div>
+                </div>
+                <p><span contenteditable="true" class="editable-cell text-[12px] tm">${esc(c[1])}</span></p>
+                <div class="flex flex-wrap gap-2 mn text-[10px] tm">
+                  <span class="rounded px-2 py-0.5" style="border:1px solid var(--c-border);"><span contenteditable="true" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></span>
+                  <span class="rounded px-2 py-0.5" style="border:1px solid var(--c-border);"><span contenteditable="true" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></span>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+        return `
+          <div data-category="${cat.slug}" class="print-brk">
+            <div class="cat-bar flex items-center justify-between mb-3">
+              <h2 contenteditable="true" class="editable-cell text-[11px] font-bold uppercase tracking-[0.2em] tm hd">${esc(cl)}</h2>
+              <button class="cat-del no-print text-xs px-2 py-0.5" onclick="delCat(this)">&times;</button>
+            </div>
+            <div class="themed-card rounded-xl overflow-hidden" style="box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+              <div class="cat-hdr hidden md:grid gap-px themed-hdr text-[9px] font-bold uppercase tracking-[0.14em]" style="${GRID}">
+                ${hdrs.map(h=>`<div class="px-3 py-2"><span contenteditable="true" class="editable-cell">${esc(h)}</span></div>`).join('')}
+                <div></div>
+              </div>
+              ${rows}
+            </div>
+          </div>`;
+      }).join('');
+
+      /* Footer */
+      document.getElementById('motivation').innerText = m.motto;
+      document.getElementById('footer-ver').textContent = m.ver;
+      document.getElementById('footer-date').textContent = today();
+    }
+
+    /* ═══ THEME ═══ */
+    function setTheme(t) {
+      theme = t;
+      document.documentElement.setAttribute('data-theme', t);
+      document.querySelectorAll('#tg .pl').forEach(b => b.classList.toggle('on', b.getAttribute('data-t')===t));
+    }
+
+    /* ═══ LANGUAGE ═══ */
+    function switchLang(l) {
+      if (l===lang) return;
+      lang = l;
+      document.querySelectorAll('#lg .pl').forEach(b => b.classList.toggle('on', b.getAttribute('data-l')===l));
+      const p = document.getElementById('page');
+      p.classList.add('fading');
+      setTimeout(() => { render(); p.classList.remove('fading'); }, 200);
+      closeShop();
+    }
+
+    /* ═══ MULTIPLIER ═══ */
+    function setMult(m) {
+      mult = m;
+      document.querySelectorAll('[data-mult]').forEach(b => b.classList.toggle('on', parseFloat(b.getAttribute('data-mult'))===m));
+      document.querySelectorAll('[data-field]').forEach(el => {
+        const base = el.getAttribute('data-base');
+        if (base) el.textContent = scaleNumbers(base, m);
+      });
+    }
+
+    /* ═══ COMPACT ═══ */
+    function toggleCompact() {
+      isCompact = !isCompact;
+      document.getElementById('page').classList.toggle('compact', isCompact);
+      document.getElementById('btn-compact').classList.toggle('on', isCompact);
+    }
+
+    /* ═══ SHOPPING LIST ═══ */
+    const CHK_SVG = '<svg class="w-2.5 h-2.5" style="color:var(--c-accent-fg);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    function generateShoppingList() {
+      const m = META[lang]||META.en;
+      const ids = [];
+      document.querySelectorAll('[data-row]').forEach(r => { const id=parseInt(r.getAttribute('data-id'),10); if(id) ids.push(id); });
+      const seen = new Set(), items = [];
+      ids.forEach(id => {
+        const ing = INGREDIENTS[id]; if (!ing) return;
+        (ing[lang]||ing.en).forEach(item => { const k=item.toLowerCase(); if(!seen.has(k)){seen.add(k);items.push(item);} });
+      });
+      document.getElementById('shop-title').textContent = m.shopTitle;
+      document.getElementById('shop-subtitle').textContent = m.shopSub+' ('+ids.length+' swaps)';
+      document.getElementById('shop-footer').textContent = m.shopFoot;
+      document.getElementById('shop-add-label').textContent = m.shopAdd;
+      document.getElementById('shop-body').innerHTML = items.map(item => `
+        <label class="flex items-center gap-3 py-1.5 cursor-pointer group">
+          <div class="shop-check" onclick="this.classList.toggle('done');event.preventDefault();">${CHK_SVG}</div>
+          <span contenteditable="true" class="editable-cell text-[12px]">${esc(item)}</span>
+        </label>`).join('');
+      const pg = document.getElementById('shopping-page');
+      pg.classList.remove('hidden');
+      pg.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    function closeShop() { document.getElementById('shopping-page').classList.add('hidden'); }
+
+    function addShopItem() {
+      const body = document.getElementById('shop-body');
+      const el = document.createElement('label');
+      el.className = 'flex items-center gap-3 py-1.5 cursor-pointer group';
+      el.innerHTML = `<div class="shop-check" onclick="this.classList.toggle('done');event.preventDefault();">${CHK_SVG}</div>
+        <span contenteditable="true" class="editable-cell text-[12px]" data-placeholder="1">\u2026</span>`;
+      body.appendChild(el);
+      const sp = el.querySelector('span[contenteditable]');
+      sp.focus();
+      const range = document.createRange(); range.selectNodeContents(sp);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    }
+
+    /* ═══ CRUD ═══ */
+    function delRow(btn) {
+      const row = btn.closest('[data-row]');
+      row.style.opacity='0'; row.style.maxHeight='0'; row.style.overflow='hidden';
+      setTimeout(() => row.remove(), 280);
+    }
+    function delCat(btn) {
+      const cat = btn.closest('[data-category]');
+      cat.style.opacity='0';
+      setTimeout(() => cat.remove(), 300);
+    }
+
+    /* ═══ INIT ═══ */
+    document.addEventListener('DOMContentLoaded', () => {
+      render();
+      document.addEventListener('keydown', e => {
+        if (e.key==='Enter' && e.target.hasAttribute('contenteditable')) { e.preventDefault(); e.target.blur(); }
+      });
+    });
+  </script>
+</body>
+</html>
