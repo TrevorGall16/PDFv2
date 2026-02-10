@@ -105,6 +105,7 @@ body {
   font-family: var(--font-body);
   background: var(--c-bg);
   color: var(--c-text);
+  font-size: var(--base-fs, 16px);
 }
 
 h1,
@@ -201,6 +202,27 @@ h3,
   gap: 10px;
 }
 
+.format-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--c-muted);
+}
+
+.format-label input[type='range'] {
+  width: 100%;
+  accent-color: var(--c-accent);
+}
+
+.format-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
 .pill-group-bg {
   background: color-mix(in srgb, var(--c-text) 5%, transparent);
 }
@@ -264,14 +286,6 @@ h3,
   }
   .animate-pulse {
     display: none !important;
-  }
-  .bar-filled {
-    background: transparent !important;
-    border: 1px solid #000 !important;
-  }
-  .bar-empty {
-    background: transparent !important;
-    border: 1px solid #999 !important;
   }
   .cat-hdr {
     background: white !important;
@@ -564,14 +578,6 @@ h3,
   transition: opacity 0.15s;
 }
 
-.bar-filled {
-  background: var(--c-bar-on);
-}
-
-.bar-empty {
-  background: var(--c-bar-off);
-}
-
 .shop-close {
   transition: opacity 0.15s;
 }
@@ -756,6 +762,7 @@ h3,
   display: grid;
   gap: 8px;
   background: color-mix(in srgb, var(--c-page) 90%, transparent);
+  position: relative;
 }
 
 .tier1-craving {
@@ -780,16 +787,43 @@ h3,
   letter-spacing: 0.12em;
 }
 
-.tier1-score {
-  font-size: 12px;
+.tier1-notes-label {
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--c-muted);
+}
+
+.tier1-notes {
+  display: grid;
+  gap: 6px;
+}
+
+.tier1-del {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  border: 1px solid var(--c-border);
+  background: var(--c-page);
+  color: var(--c-muted);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.tier1-item:hover .tier1-del {
+  opacity: 1;
 }
 
 /* ═══ SWAP GRID ═══ */
 .swap-grid {
-  grid-template-columns: 1.1fr 1.6fr 0.55fr 1.5fr 54px 24px;
+  grid-template-columns: 1.1fr 1.6fr 0.55fr 1.2fr 1.4fr 24px;
 }
 
 .swap-grid-card {
@@ -805,7 +839,7 @@ h3,
 }
 
 .cat-hdr-row {
-  grid-template-columns: 1.1fr 1.6fr 0.55fr 1.5fr 54px 24px;
+  grid-template-columns: 1.1fr 1.6fr 0.55fr 1.2fr 1.4fr 24px;
 }
 
 .cat-qty,
@@ -815,6 +849,29 @@ h3,
 
 .ftr-sep {
   background: linear-gradient(to right, transparent, var(--c-border), transparent);
+}
+
+[data-theme='athlete'] {
+  --c-border: #dc2626;
+}
+
+[data-theme='athlete'] .hd,
+[data-theme='athlete'] .setup-title,
+[data-theme='athlete'] .setup-label,
+[data-theme='athlete'] .tier1-craving,
+[data-theme='athlete'] .tier1-title {
+  text-transform: uppercase;
+}
+
+[data-theme='eco'] .ftr-sep {
+  background: none;
+  border-top: 1px dashed var(--c-border);
+  height: 0;
+}
+
+[data-theme='eco'] .cat-bar {
+  border-bottom: 1px dashed var(--c-border);
+  padding-bottom: 6px;
 }
 
 @media (max-width: 1024px) {

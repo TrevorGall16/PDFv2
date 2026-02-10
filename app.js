@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════ */
 /*  DATA V5 PREVIEW — 17 Swaps · 3 Categories · 6 Langs        */
 /*  Authoritarian Edition — Modular JS                         */
 /* ═══════════════════════════════════════════════════════════ */
@@ -65,7 +65,7 @@ function applyEditableContent(data) {
   });
 }
 
-function applyTextFormat(command) {
+function formatDoc(command) {
   if (document.activeElement && document.activeElement.hasAttribute('contenteditable')) {
     document.execCommand(command, false, null);
   }
@@ -380,7 +380,7 @@ function addShopItem() {
   const el = document.createElement('div');
   el.className = 'shop-item flex items-center gap-3 py-1.5 group';
   el.innerHTML = `<div class="shop-check" data-action="toggle-check">${CHK_SVG}</div>
-        <span contenteditable="true" class="editable-cell text-[12px] flex-1" data-placeholder="1">\u2026</span>
+        <span contenteditable="true" class="editable-cell text-[12px] flex-1" data-placeholder="1">…</span>
         <button class="shop-del no-print" data-action="del-shop" title="Remove">&times;</button>`;
   body.appendChild(el);
   const sp = el.querySelector('span[contenteditable]');
@@ -477,13 +477,13 @@ function handleClick(event) {
       event.preventDefault();
       break;
     case 'format-bold':
-      applyTextFormat('bold');
+      formatDoc('bold');
       break;
     case 'format-italic':
-      applyTextFormat('italic');
+      formatDoc('italic');
       break;
     case 'format-underline':
-      applyTextFormat('underline');
+      formatDoc('underline');
       break;
     default:
       break;
