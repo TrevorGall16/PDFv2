@@ -13,7 +13,6 @@ let isCompact = false;
 const deletedSteps = new Set();
 const deletedRows = new Set();
 const deletedCats = new Set();
-const deletedTier1 = new Set();
 
 const CHK_SVG =
   '<svg class="w-2.5 h-2.5" style="color:var(--c-accent-fg);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -40,35 +39,23 @@ function scaleNumbers(str, f) {
   });
 }
 
+function scoreBar(n) {
+  let h = '<div class="flex gap-[3px] items-end" title="' + n + '/10">';
+  for (let i = 1; i <= 10; i += 1) {
+    const on = i <= n;
+    h +=
+      '<div class="w-[3px] rounded-sm ' +
+      (on ? 'bar-filled h-[14px]' : 'bar-empty h-[10px]') +
+      '"></div>';
+  }
+  return h + '</div>';
+}
+
 function showToast(msg) {
   const t = document.getElementById('restore-toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-function captureEditableContent() {
-  const data = new Map();
-  document.querySelectorAll('[data-edit-key]').forEach((el) => {
-    data.set(el.getAttribute('data-edit-key'), el.innerHTML);
-  });
-  return data;
-}
-
-function applyEditableContent(data) {
-  if (!data) return;
-  document.querySelectorAll('[data-edit-key]').forEach((el) => {
-    const key = el.getAttribute('data-edit-key');
-    if (data.has(key)) {
-      el.innerHTML = data.get(key);
-    }
-  });
-}
-
-function applyTextFormat(command) {
-  if (document.activeElement && document.activeElement.hasAttribute('contenteditable')) {
-    document.execCommand(command, false, null);
-  }
 }
 
 function getTier1Swaps() {
@@ -77,7 +64,6 @@ function getTier1Swaps() {
     if (deletedCats.has(cat.slug)) return;
     cat.swaps.forEach((swap) => {
       if (deletedRows.has(swap.id)) return;
-      if (deletedTier1.has(swap.id)) return;
       if (swap.score >= TIER1_MIN_SCORE) {
         swaps.push({ ...swap, slug: cat.slug });
       }
@@ -97,20 +83,15 @@ function renderTier1() {
       const c = swap.t[lang] || swap.t.en;
       const qty = scaleNumbers(c[2], mult);
       const mac = scaleNumbers(swap.macros, mult);
-      const notesLabel = m.notesLabel || 'Strategic Notes';
       return `
         <div class="tier1-item" data-tier-id="${swap.id}">
-          <button class="tier1-del no-print" data-action="del-tier1" data-tier-id="${swap.id}" aria-label="Remove tier one">&times;</button>
-          <div contenteditable="true" data-edit-key="tier1:${swap.id}:craving" class="editable-cell tier1-craving">${esc(c[0])}</div>
-          <div contenteditable="true" data-edit-key="tier1:${swap.id}:solution" class="editable-cell tier1-solution">${esc(c[1])}</div>
+          <div contenteditable="true" class="editable-cell tier1-craving">${esc(c[0])}</div>
+          <div contenteditable="true" class="editable-cell tier1-solution">${esc(c[1])}</div>
           <div class="tier1-meta mn">
-            <span contenteditable="true" data-edit-key="tier1:${swap.id}:qty" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span>
-            <span contenteditable="true" data-edit-key="tier1:${swap.id}:macro" class="editable-cell" data-field="m" data-base="${esc(swap.macros)}">${esc(mac)}</span>
+            <span contenteditable="true" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span>
+            <span contenteditable="true" class="editable-cell" data-field="m" data-base="${esc(swap.macros)}">${esc(mac)}</span>
           </div>
-          <div class="tier1-notes">
-            <span class="tier1-notes-label">${esc(notesLabel)}</span>
-            <div contenteditable="true" data-edit-key="tier1:${swap.id}:notes" class="editable-cell">${esc(m.notesPlaceholder || '')}</div>
-          </div>
+          <div class="tier1-score">Score ${swap.score}/10</div>
         </div>`;
     })
     .join('');
@@ -139,8 +120,8 @@ function render() {
             <button class="step-del no-print absolute -top-1 -right-1" data-action="del-step" data-step="${p.step}" title="Remove step">&times;</button>
             <span class="mn text-3xl sm:text-4xl font-bold leading-none tracking-tighter select-none shrink-0 tm">${p.step}</span>
             <div class="pt-1">
-              <h3 contenteditable="true" data-edit-key="protocol:${p.step}:title" class="editable-cell text-xs font-bold uppercase tracking-[0.12em] hd">${esc(c[0])}</h3>
-              <p contenteditable="true" data-edit-key="protocol:${p.step}:desc" class="editable-cell mt-1 text-[11px] tm leading-relaxed">${esc(c[1])}</p>
+              <h3 contenteditable="true" class="editable-cell text-xs font-bold uppercase tracking-[0.12em] hd">${esc(c[0])}</h3>
+              <p contenteditable="true" class="editable-cell mt-1 text-[11px] tm leading-relaxed">${esc(c[1])}</p>
             </div>
           </div>`;
     })
@@ -160,32 +141,28 @@ function render() {
           const altClass = i % 2 !== 0 ? 'row-alt' : '';
           const qty = scaleNumbers(c[2], mult);
           const mac = scaleNumbers(s.macros, mult);
-          const notesLabel = m.notesLabel || 'Strategic Notes';
           return `
             <div data-row data-id="${s.id}">
               <div class="hidden md:grid gap-px items-center py-print swap-grid swap-grid-card ${altClass}">
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:craving" class="editable-cell text-[12px] font-semibold">${esc(c[0])}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:solution" class="editable-cell text-[12px] tm">${esc(c[1])}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:qty" class="editable-cell mn text-[10px] font-medium tm" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:macro" class="editable-cell mn text-[10px] font-medium tm" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] font-semibold">${esc(c[0])}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] tm">${esc(c[1])}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell mn text-[10px] font-medium tm" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell mn text-[10px] font-medium tm" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></div>
+                <div class="px-3 py-2.5 flex items-center">${scoreBar(s.score)}</div>
                 <div class="flex items-center justify-center no-print"><button class="row-del" data-action="del-row" data-row-id="${s.id}">&times;</button></div>
               </div>
               <div class="md:hidden px-4 py-3 space-y-2 swap-grid-card ${altClass}">
                 <div class="flex items-center justify-between gap-2">
-                  <span contenteditable="true" data-edit-key="row:${s.id}:craving-mobile" class="editable-cell text-[13px] font-semibold">${esc(c[0])}</span>
+                  <span contenteditable="true" class="editable-cell text-[13px] font-semibold">${esc(c[0])}</span>
                   <div class="flex items-center gap-3">
+                    <div class="shrink-0">${scoreBar(s.score)}</div>
                     <button class="row-del no-print text-sm" data-action="del-row" data-row-id="${s.id}">&times;</button>
                   </div>
                 </div>
-                <p><span contenteditable="true" data-edit-key="row:${s.id}:solution-mobile" class="editable-cell text-[12px] tm">${esc(c[1])}</span></p>
+                <p><span contenteditable="true" class="editable-cell text-[12px] tm">${esc(c[1])}</span></p>
                 <div class="flex flex-wrap gap-2 mn text-[10px] tm">
-                  <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" data-edit-key="row:${s.id}:qty-mobile" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></span>
-                  <span class="rounded px-2 py-0.5 cat-macro"><span contenteditable="true" data-edit-key="row:${s.id}:macro-mobile" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></span>
-                </div>
-                <div class="mt-2">
-                  <span class="tier1-notes-label">${esc(notesLabel)}</span>
-                  <div contenteditable="true" data-edit-key="row:${s.id}:notes-mobile" class="editable-cell text-[11px]">${esc(m.notesPlaceholder || '')}</div>
+                  <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></span>
+                  <span class="rounded px-2 py-0.5 cat-macro"><span contenteditable="true" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></span>
                 </div>
               </div>
             </div>`;
@@ -194,7 +171,7 @@ function render() {
       return `
           <div data-category="${cat.slug}" class="print-brk">
             <div class="cat-bar flex items-center justify-between mb-3">
-              <h2 contenteditable="true" data-edit-key="cat:${cat.slug}:label" class="editable-cell text-[11px] font-bold uppercase tracking-[0.2em] tm hd">${esc(cl)}</h2>
+              <h2 contenteditable="true" class="editable-cell text-[11px] font-bold uppercase tracking-[0.2em] tm hd">${esc(cl)}</h2>
               <button class="cat-del no-print text-xs px-2 py-0.5" data-action="del-cat" data-cat="${cat.slug}">&times;</button>
             </div>
             <div class="themed-card rounded-xl overflow-hidden cat-card">
@@ -300,35 +277,16 @@ function delCat(slug) {
   }
 }
 
-function delTier1(id) {
-  const el = document.querySelector('[data-tier-id="' + id + '"]');
-  if (el) {
-    el.style.opacity = '0';
-    setTimeout(() => {
-      deletedTier1.add(id);
-      render();
-    }, 200);
-  }
-}
-
 function restoreDefaults() {
-  const preserved = captureEditableContent();
-  const shopBody = document.getElementById('shop-body');
-  const wasCleared = shopBody ? shopBody.children.length === 0 : false;
   deletedSteps.clear();
   deletedRows.clear();
   deletedCats.clear();
-  deletedTier1.clear();
   render();
-  applyEditableContent(preserved);
   const m = META[lang] || META.en;
   showToast(m.restoreToast);
-  if (wasCleared) {
-    buildShoppingList({ reveal: false });
-  }
 }
 
-function buildShoppingList({ reveal = true } = {}) {
+function generateShoppingList() {
   const m = META[lang] || META.en;
   const ids = [];
   document.querySelectorAll('[data-row]').forEach((r) => {
@@ -357,10 +315,8 @@ function buildShoppingList({ reveal = true } = {}) {
   const wrap = document.getElementById('shop-clear-wrap');
   wrap.classList.toggle('hidden', items.length === 0);
   const pg = document.getElementById('shopping-page');
-  if (reveal) {
-    pg.classList.remove('hidden');
-    pg.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  pg.classList.remove('hidden');
+  pg.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function shopItemHTML(text) {
@@ -437,7 +393,7 @@ function handleClick(event) {
       toggleCompact();
       break;
     case 'open-shop':
-      buildShoppingList({ reveal: true });
+      generateShoppingList();
       break;
     case 'restore-defaults':
       restoreDefaults();
@@ -457,9 +413,6 @@ function handleClick(event) {
     case 'del-cat':
       delCat(target.getAttribute('data-cat'));
       break;
-    case 'del-tier1':
-      delTier1(parseInt(target.getAttribute('data-tier-id'), 10));
-      break;
     case 'close-shop':
       closeShop();
       break;
@@ -475,15 +428,6 @@ function handleClick(event) {
     case 'toggle-check':
       target.classList.toggle('done');
       event.preventDefault();
-      break;
-    case 'format-bold':
-      applyTextFormat('bold');
-      break;
-    case 'format-italic':
-      applyTextFormat('italic');
-      break;
-    case 'format-underline':
-      applyTextFormat('underline');
       break;
     default:
       break;
@@ -501,14 +445,6 @@ function init() {
   render();
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('click', handleClick);
-  const slider = document.getElementById('font-size-slider');
-  if (slider) {
-    slider.addEventListener('input', (event) => {
-      const value = event.target.value;
-      document.body.style.setProperty('--base-fs', `${value}px`);
-    });
-    document.body.style.setProperty('--base-fs', `${slider.value}px`);
-  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -47,18 +47,6 @@
           <button data-mult="2" class="pl mn">2x</button>
         </div>
       </div>
-      <div class="setup-block">
-        <h2 class="setup-label">Text Formatting</h2>
-        <label class="format-label">
-          <span>Font Size</span>
-          <input id="font-size-slider" type="range" min="14" max="20" value="16">
-        </label>
-        <div class="format-actions">
-          <button class="tb-btn" data-action="format-bold">Bold</button>
-          <button class="tb-btn" data-action="format-italic">Italic</button>
-          <button class="tb-btn" data-action="format-underline">Underline</button>
-        </div>
-      </div>
       <div class="setup-actions">
         <button id="btn-compact" class="tb-btn" data-action="toggle-compact">
           <span id="compact-label"></span>
@@ -92,9 +80,9 @@
           <header id="header-root">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
               <div class="space-y-3 max-w-lg">
-                <h1 id="title" contenteditable="true" data-edit-key="header:title"
+                <h1 id="title" contenteditable="true"
                   class="editable-cell text-3xl sm:text-4xl font-black uppercase tracking-tight leading-[1.05] whitespace-pre-line hd"></h1>
-                <p id="subtitle" contenteditable="true" data-edit-key="header:subtitle"
+                <p id="subtitle" contenteditable="true"
                   class="editable-cell text-xs font-medium tracking-wide tm"></p>
               </div>
             </div>
@@ -138,7 +126,7 @@
           </div>
           <footer id="footer-root">
             <div class="ftr-sep h-px mb-5"></div>
-            <p id="motivation" contenteditable="true" data-edit-key="footer:motto" class="editable-cell text-center text-[11px] italic font-medium leading-relaxed tm"></p>
+            <p id="motivation" contenteditable="true" class="editable-cell text-center text-[11px] italic font-medium leading-relaxed tm"></p>
             <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] mn tracking-wide tm">
               <span id="footer-ver"></span>
               <span id="footer-date"></span>
