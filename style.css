@@ -101,11 +101,20 @@
 }
 
 /* ═══ APPLY FONTS ═══ */
+
+:root {
+  --base-fs: 16px;
+}
+
+html {
+  font-size: var(--base-fs);
+}
+
 body {
   font-family: var(--font-body);
   background: var(--c-bg);
   color: var(--c-text);
-  font-size: var(--base-fs, 16px);
+  font-size: var(--base-fs);
 }
 
 h1,
@@ -151,18 +160,22 @@ h3,
 }
 
 #setup-sidebar {
-  width: 240px;
+  width: 280px;
   position: sticky;
   top: 24px;
   align-self: flex-start;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 18px;
+  padding: 16px;
   border-radius: 20px;
   background: color-mix(in srgb, var(--c-page) 90%, transparent);
   border: 1px solid var(--c-border);
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+}
+
+#lg {
+  flex-wrap: wrap;
 }
 
 .setup-header {
@@ -218,9 +231,13 @@ h3,
 }
 
 .format-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
+}
+
+.format-actions .tb-btn {
+  flex: 1 1 78px;
 }
 
 .pill-group-bg {
@@ -380,6 +397,22 @@ h3,
 .editable-cell:focus {
   border-bottom-color: var(--c-accent);
   background: rgba(128, 128, 128, 0.02);
+}
+
+
+[contenteditable='true'],
+.editable-cell,
+.notes-field,
+.tier1-notes {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+[contenteditable='true'],
+.notes-field {
+  display: block;
+  min-height: 1.4em;
 }
 
 /* ═══ MODULE CONTROLS ═══ */
@@ -578,6 +611,7 @@ h3,
   transition: opacity 0.15s;
 }
 
+
 .shop-close {
   transition: opacity 0.15s;
 }
@@ -758,7 +792,7 @@ h3,
 .tier1-item {
   border: 1px solid var(--c-border);
   border-radius: 18px;
-  padding: 18px;
+  padding: 16px;
   display: grid;
   gap: 8px;
   background: color-mix(in srgb, var(--c-page) 90%, transparent);
@@ -797,6 +831,7 @@ h3,
 .tier1-notes {
   display: grid;
   gap: 6px;
+  width: 100%;
 }
 
 .tier1-del {
