@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════ */
 /*  DATA V5 PREVIEW — 17 Swaps · 3 Categories · 6 Langs        */
 /*  Authoritarian Edition — Modular JS                         */
 /* ═══════════════════════════════════════════════════════════ */
@@ -65,10 +65,10 @@ function applyEditableContent(data) {
   });
 }
 
-function formatDoc(command, event) {
-  if (event) event.preventDefault();
-  document.execCommand(command, false, null);
-  return false;
+function formatDoc(command) {
+  if (document.activeElement && document.activeElement.hasAttribute('contenteditable')) {
+    document.execCommand(command, false, null);
+  }
 }
 
 function getTier1Swaps() {
@@ -116,8 +116,20 @@ function renderTier1() {
     .join('');
 }
 
-function renderProtocolSection() {
+function render() {
   const m = META[lang] || META.en;
+  document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
+  document.getElementById('title').innerText = m.title;
+  document.getElementById('subtitle').innerText = m.subtitle;
+  document.getElementById('edit-hint').textContent = m.editHint;
+  document.getElementById('mult-label').textContent = m.multLbl;
+  document.getElementById('shop-label').textContent = m.shopBtn;
+  document.getElementById('compact-label').textContent = m.compact;
+  document.getElementById('restore-label').textContent = m.restoreBtn;
+  document.getElementById('print-btn-label').textContent = m.printBtn;
+
+  renderTier1();
+
   const visibleSteps = PROTOCOL.filter((p) => !deletedSteps.has(p.step));
   document.getElementById('protocol-body').innerHTML = visibleSteps
     .map((p) => {
@@ -133,11 +145,7 @@ function renderProtocolSection() {
           </div>`;
     })
     .join('');
-  document.getElementById('step-add-label').textContent = m.restoreStep || 'Step';
-}
 
-function renderCategoriesSection() {
-  const m = META[lang] || META.en;
   const hdrs = m.cols;
   document.getElementById('categories-root').innerHTML = CATEGORIES.filter(
     (cat) => !deletedCats.has(cat.slug)
@@ -160,7 +168,7 @@ function renderCategoriesSection() {
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:solution" class="editable-cell text-[12px] tm">${esc(c[1])}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:qty" class="editable-cell mn text-[10px] font-medium tm" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:macro" class="editable-cell mn text-[10px] font-medium tm" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
+                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
                 <div class="flex items-center justify-center no-print"><button class="row-del" data-action="del-row" data-row-id="${s.id}">&times;</button></div>
               </div>
               <div class="md:hidden px-4 py-3 space-y-2 swap-grid-card ${altClass}">
@@ -177,7 +185,7 @@ function renderCategoriesSection() {
                 </div>
                 <div class="mt-2">
                   <span class="tier1-notes-label">${esc(notesLabel)}</span>
-                  <div contenteditable="true" data-edit-key="row:${s.id}:notes-mobile" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</div>
+                  <div contenteditable="true" data-edit-key="row:${s.id}:notes-mobile" class="editable-cell text-[11px]">${esc(m.notesPlaceholder || '')}</div>
                 </div>
               </div>
             </div>`;
@@ -201,25 +209,6 @@ function renderCategoriesSection() {
           </div>`;
     })
     .join('');
-}
-
-function render() {
-  const m = META[lang] || META.en;
-  document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
-  document.getElementById('title').innerText = m.title;
-  document.getElementById('subtitle').innerText = m.subtitle;
-  document.getElementById('edit-hint').textContent = m.editHint;
-  document.getElementById('mult-label').textContent = m.multLbl;
-  document.getElementById('shop-label').textContent = m.shopBtn;
-  document.getElementById('compact-label').textContent = m.compact;
-  document.getElementById('restore-label').textContent = m.restoreBtn;
-  document.getElementById('print-btn-label').textContent = m.printBtn;
-
-  renderTier1();
-
-  renderProtocolSection();
-  renderCategoriesSection();
-  document.getElementById('tier1-add-label').textContent = m.restoreTier1 || 'Tier 1';
 
   document.getElementById('motivation').innerText = m.motto;
   document.getElementById('footer-ver').textContent = m.ver;
@@ -282,7 +271,7 @@ function delStep(step) {
     el.style.opacity = '0';
     setTimeout(() => {
       deletedSteps.add(step);
-      renderProtocolSection();
+      render();
     }, 250);
   }
 }
@@ -295,8 +284,7 @@ function delRow(id) {
     el.style.overflow = 'hidden';
     setTimeout(() => {
       deletedRows.add(id);
-      renderTier1();
-      renderCategoriesSection();
+      render();
     }, 280);
   }
 }
@@ -307,8 +295,7 @@ function delCat(slug) {
     el.style.opacity = '0';
     setTimeout(() => {
       deletedCats.add(slug);
-      renderTier1();
-      renderCategoriesSection();
+      render();
     }, 300);
   }
 }
@@ -319,28 +306,9 @@ function delTier1(id) {
     el.style.opacity = '0';
     setTimeout(() => {
       deletedTier1.add(id);
-      renderTier1();
+      render();
     }, 200);
   }
-}
-
-function restoreTier1Card() {
-  const candidate = CATEGORIES.flatMap((cat) => cat.swaps)
-    .find((swap) => deletedTier1.has(swap.id));
-  if (!candidate) return;
-  const preserved = captureEditableContent();
-  deletedTier1.delete(candidate.id);
-  renderTier1();
-  applyEditableContent(preserved);
-}
-
-function restoreProtocolStep() {
-  const candidate = PROTOCOL.find((step) => deletedSteps.has(step.step));
-  if (!candidate) return;
-  const preserved = captureEditableContent();
-  deletedSteps.delete(candidate.step);
-  renderProtocolSection();
-  applyEditableContent(preserved);
 }
 
 function restoreDefaults() {
@@ -412,7 +380,7 @@ function addShopItem() {
   const el = document.createElement('div');
   el.className = 'shop-item flex items-center gap-3 py-1.5 group';
   el.innerHTML = `<div class="shop-check" data-action="toggle-check">${CHK_SVG}</div>
-        <span contenteditable="true" class="editable-cell text-[12px] flex-1" data-placeholder="1">\u2026</span>
+        <span contenteditable="true" class="editable-cell text-[12px] flex-1" data-placeholder="1">…</span>
         <button class="shop-del no-print" data-action="del-shop" title="Remove">&times;</button>`;
   body.appendChild(el);
   const sp = el.querySelector('span[contenteditable]');
@@ -492,12 +460,6 @@ function handleClick(event) {
     case 'del-tier1':
       delTier1(parseInt(target.getAttribute('data-tier-id'), 10));
       break;
-    case 'restore-tier1':
-      restoreTier1Card();
-      break;
-    case 'restore-step':
-      restoreProtocolStep();
-      break;
     case 'close-shop':
       closeShop();
       break;
@@ -513,6 +475,15 @@ function handleClick(event) {
     case 'toggle-check':
       target.classList.toggle('done');
       event.preventDefault();
+      break;
+    case 'format-bold':
+      formatDoc('bold');
+      break;
+    case 'format-italic':
+      formatDoc('italic');
+      break;
+    case 'format-underline':
+      formatDoc('underline');
       break;
     default:
       break;
@@ -534,9 +505,9 @@ function init() {
   if (slider) {
     slider.addEventListener('input', (event) => {
       const value = event.target.value;
-      document.documentElement.style.setProperty('--base-fs', `${value}px`);
+      document.body.style.setProperty('--base-fs', `${value}px`);
     });
-    document.documentElement.style.setProperty('--base-fs', `${slider.value}px`);
+    document.body.style.setProperty('--base-fs', `${slider.value}px`);
   }
 }
 

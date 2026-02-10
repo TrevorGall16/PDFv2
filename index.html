@@ -54,9 +54,9 @@
           <input id="font-size-slider" type="range" min="14" max="20" value="16">
         </label>
         <div class="format-actions">
-          <button class="tb-btn" onmousedown="return formatDoc('bold', event)">Bold</button>
-          <button class="tb-btn" onmousedown="return formatDoc('italic', event)">Italic</button>
-          <button class="tb-btn" onmousedown="return formatDoc('underline', event)">Underline</button>
+          <button class="tb-btn" data-action="format-bold">Bold</button>
+          <button class="tb-btn" data-action="format-italic">Italic</button>
+          <button class="tb-btn" data-action="format-underline">Underline</button>
         </div>
       </div>
       <div class="setup-actions">
@@ -112,9 +112,6 @@
               <p id="tier-subtitle" class="tier1-subtitle tm"></p>
             </div>
             <div id="tier1-body" class="grid gap-6"></div>
-            <div class="no-print">
-              <button class="tb-btn" data-action="restore-tier1">+ <span id="tier1-add-label">Tier 1</span></button>
-            </div>
           </div>
         </section>
 
@@ -124,9 +121,6 @@
             <button class="mod-arrow" data-action="move-module" data-dir="1">&#x2193;</button>
           </div>
           <div id="protocol-body" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"></div>
-          <div class="no-print">
-            <button class="tb-btn" data-action="restore-step">+ <span id="step-add-label">Step</span></button>
-          </div>
         </section>
 
         <section data-module="categories" class="module group">
