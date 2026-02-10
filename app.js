@@ -192,7 +192,7 @@ function renderCategoriesSection() {
             <div class="themed-card rounded-xl overflow-hidden cat-card">
               <div class="cat-hdr hidden md:grid gap-px themed-hdr text-[9px] font-bold uppercase tracking-[0.14em] cat-hdr-row">
                 ${hdrs
-                  .map((h) => `<div class="px-3 py-2"><span contenteditable="true" class="editable-cell">${esc(h)}</span></div>`)
+                  .map((h, i) => `<div class="px-3 py-2"><span contenteditable="true" data-edit-key="cat:${cat.slug}:hdr:${i}" class="editable-cell">${esc(h)}</span></div>`)
                   .join('')}
                 <div></div>
               </div>
@@ -236,6 +236,7 @@ function setTheme(nextTheme) {
 
 function switchLang(nextLang) {
   if (nextLang === lang) return;
+  const preserved = captureEditableContent();
   lang = nextLang;
   document.querySelectorAll('#lg .pl').forEach((b) =>
     b.classList.toggle('on', b.getAttribute('data-lang') === nextLang)
@@ -244,6 +245,11 @@ function switchLang(nextLang) {
   p.classList.add('fading');
   setTimeout(() => {
     render();
+    const notesOnly = new Map();
+    preserved.forEach((val, key) => {
+      if (key.includes(':notes')) notesOnly.set(key, val);
+    });
+    applyEditableContent(notesOnly);
     p.classList.remove('fading');
   }, 200);
   closeShop();
@@ -514,6 +520,15 @@ function handleClick(event) {
       target.classList.toggle('done');
       event.preventDefault();
       break;
+    case 'format-bold':
+      formatDoc('bold', event);
+      break;
+    case 'format-italic':
+      formatDoc('italic', event);
+      break;
+    case 'format-underline':
+      formatDoc('underline', event);
+      break;
     default:
       break;
   }
@@ -521,8 +536,11 @@ function handleClick(event) {
 
 function handleKeydown(event) {
   if (event.key === 'Enter' && event.target.hasAttribute('contenteditable')) {
-    event.preventDefault();
-    event.target.blur();
+    const isNotes = event.target.classList.contains('notes-field') || event.target.closest('.tier1-notes');
+    if (!isNotes) {
+      event.preventDefault();
+      event.target.blur();
+    }
   }
 }
 
@@ -530,6 +548,9 @@ function init() {
   render();
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('click', handleClick);
+  document.querySelectorAll('[data-action^="format-"]').forEach((btn) => {
+    btn.addEventListener('mousedown', (e) => e.preventDefault());
+  });
   const slider = document.getElementById('font-size-slider');
   if (slider) {
     slider.addEventListener('input', (event) => {

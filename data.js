@@ -21,6 +21,8 @@ const META = {
     tierSubtitle: "High-impact swaps with maximum compliance.",
     notesLabel: "Strategic Notes",
     notesPlaceholder: "",
+    restoreStep: "Step",
+    restoreTier1: "Tier 1",
   },
   fr: {
     title: "Finaliser pour impression.",
@@ -44,6 +46,8 @@ const META = {
     tierSubtitle: "Swaps \u00e0 impact maximal.",
     notesLabel: "Notes strat\u00e9giques",
     notesPlaceholder: "",
+    restoreStep: "\u00c9tape",
+    restoreTier1: "Niveau 1",
   },
   es: {
     title: "Finalizar para imprimir.",
@@ -67,6 +71,8 @@ const META = {
     tierSubtitle: "Swaps de alto impacto.",
     notesLabel: "Notas estrat\u00e9gicas",
     notesPlaceholder: "",
+    restoreStep: "Paso",
+    restoreTier1: "Nivel 1",
   },
   it: {
     title: "Finalizza per la stampa.",
@@ -90,6 +96,8 @@ const META = {
     tierSubtitle: "Swap ad alto impatto.",
     notesLabel: "Note strategiche",
     notesPlaceholder: "",
+    restoreStep: "Passo",
+    restoreTier1: "Livello 1",
   },
   ru: {
     title: "\u0424\u0438\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u0435\u0447\u0430\u0442\u0438.",
@@ -113,6 +121,8 @@ const META = {
     tierSubtitle: "\u0421\u0432\u043e\u043f\u044b \u0441 \u043c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u043c \u044d\u0444\u0444\u0435\u043a\u0442\u043e\u043c.",
     notesLabel: "\u0421\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0437\u0430\u043c\u0435\u0442\u043a\u0438",
     notesPlaceholder: "",
+    restoreStep: "\u0428\u0430\u0433",
+    restoreTier1: "\u0423\u0440\u043e\u0432\u0435\u043d\u044c 1",
   },
   jp: {
     title: "\u5370\u5237\u7528\u306b\u78ba\u5b9a\u3059\u308b\u3002",
@@ -136,6 +146,8 @@ const META = {
     tierSubtitle: "\u52b9\u7387\u91cd\u8996\u306e\u4e3b\u529bSwap\u3002",
     notesLabel: "\u6226\u7565\u30e1\u30e2",
     notesPlaceholder: "",
+    restoreStep: "\u30b9\u30c6\u30c3\u30d7",
+    restoreTier1: "\u30c6\u30a3\u30a21",
   },
 };
 
