@@ -15,7 +15,12 @@
   <div class="app-shell">
     <nav id="setup-sidebar" class="no-print">
       <div class="setup-header">
-        <span class="setup-title">Setup</span>
+        <div class="flex items-center gap-2">
+          <span class="setup-title">Setup</span>
+          <span id="save-indicator" class="save-indicator">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+        </div>
         <span id="edit-hint" class="setup-hint"></span>
       </div>
       <div class="setup-block">
@@ -97,6 +102,7 @@
                 <p id="subtitle" contenteditable="true" data-edit-key="header:subtitle"
                   class="editable-cell text-xs font-medium tracking-wide tm"></p>
               </div>
+              <div id="cost-block" class="cost-block hidden"></div>
             </div>
           </header>
         </section>
@@ -112,7 +118,7 @@
               <p id="tier-subtitle" class="tier1-subtitle tm"></p>
             </div>
             <div id="tier1-body" class="grid gap-6"></div>
-            <button class="tb-btn no-print mt-3" data-action="restore-tier1">+ <span id="tier1-add-label"></span></button>
+            <button class="tb-btn restore-btn no-print mt-3" data-action="restore-tier1">+ <span id="tier1-add-label"></span></button>
           </div>
         </section>
 
@@ -122,7 +128,7 @@
             <button class="mod-arrow" data-action="move-module" data-dir="1">&#x2193;</button>
           </div>
           <div id="protocol-body" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"></div>
-          <button class="tb-btn no-print mt-3" data-action="restore-step">+ <span id="step-add-label"></span></button>
+          <button class="tb-btn restore-btn no-print mt-3" data-action="restore-step">+ <span id="step-add-label"></span></button>
         </section>
 
         <section data-module="categories" class="module group">

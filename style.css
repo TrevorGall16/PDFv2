@@ -196,6 +196,21 @@ h3,
   color: var(--c-muted);
 }
 
+.save-indicator {
+  display: inline-flex;
+  align-items: center;
+  color: #22c55e;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.save-indicator.flash {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .setup-block {
   display: flex;
   flex-direction: column;
@@ -451,13 +466,25 @@ h3,
 /* ═══ DELETE BUTTONS ═══ */
 .row-del {
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
   color: var(--c-muted);
+  background: color-mix(in srgb, var(--c-muted) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-muted) 20%, transparent);
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
 }
 
 .row-del:hover {
   color: #ef4444;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
 }
 
 [data-row]:hover .row-del {
@@ -466,13 +493,23 @@ h3,
 
 .cat-del {
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
   color: var(--c-muted);
+  background: color-mix(in srgb, var(--c-muted) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-muted) 20%, transparent);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
 }
 
 .cat-del:hover {
   color: #ef4444;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
 }
 
 [data-category]:hover > .cat-bar .cat-del {
@@ -481,14 +518,25 @@ h3,
 
 .step-del {
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
   color: var(--c-muted);
-  font-size: 14px;
+  background: color-mix(in srgb, var(--c-muted) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-muted) 20%, transparent);
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
 }
 
 .step-del:hover {
   color: #ef4444;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
 }
 
 [data-step]:hover .step-del {
@@ -520,6 +568,20 @@ h3,
 
 .shop-item:hover .shop-del {
   opacity: 1;
+}
+
+/* ═══ RESTORE [+] BUTTONS ═══ */
+.restore-btn {
+  background: color-mix(in srgb, var(--c-muted) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-muted) 20%, transparent);
+  transition: all 0.15s;
+}
+
+.restore-btn:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--c-accent) 18%, transparent);
 }
 
 /* ═══ PILLS ═══ */
@@ -840,19 +902,64 @@ h3,
   width: 22px;
   height: 22px;
   border-radius: 9999px;
-  border: 1px solid var(--c-border);
-  background: var(--c-page);
+  border: 1px solid color-mix(in srgb, var(--c-muted) 25%, transparent);
+  background: color-mix(in srgb, var(--c-muted) 8%, transparent);
   color: var(--c-muted);
   font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.tier1-del:hover {
+  color: #ef4444;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
 }
 
 .tier1-item:hover .tier1-del {
   opacity: 1;
+}
+
+/* ═══ COST OF FAILURE ═══ */
+.cost-block {
+  min-width: 200px;
+  max-width: 260px;
+  padding: 12px 14px;
+  border: var(--border-w) var(--border-s) var(--c-danger);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--c-danger) 4%, transparent);
+  flex-shrink: 0;
+}
+
+.cost-title {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--c-danger);
+  margin-bottom: 8px;
+}
+
+.cost-item {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--c-text);
+  padding-left: 12px;
+  position: relative;
+}
+
+.cost-item::before {
+  content: "\u2716";
+  position: absolute;
+  left: 0;
+  color: var(--c-danger);
+  font-size: 9px;
+  top: 2px;
 }
 
 /* ═══ SWAP GRID ═══ */

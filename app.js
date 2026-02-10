@@ -165,19 +165,19 @@ function renderCategoriesSection() {
               </div>
               <div class="md:hidden px-4 py-3 space-y-2 swap-grid-card ${altClass}">
                 <div class="flex items-center justify-between gap-2">
-                  <span contenteditable="true" data-edit-key="row:${s.id}:craving-mobile" class="editable-cell text-[13px] font-semibold">${esc(c[0])}</span>
+                  <span contenteditable="true" data-edit-key="row:${s.id}:craving" class="editable-cell text-[13px] font-semibold">${esc(c[0])}</span>
                   <div class="flex items-center gap-3">
                     <button class="row-del no-print text-sm" data-action="del-row" data-row-id="${s.id}">&times;</button>
                   </div>
                 </div>
-                <p><span contenteditable="true" data-edit-key="row:${s.id}:solution-mobile" class="editable-cell text-[12px] tm">${esc(c[1])}</span></p>
+                <p><span contenteditable="true" data-edit-key="row:${s.id}:solution" class="editable-cell text-[12px] tm">${esc(c[1])}</span></p>
                 <div class="flex flex-wrap gap-2 mn text-[10px] tm">
-                  <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" data-edit-key="row:${s.id}:qty-mobile" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></span>
-                  <span class="rounded px-2 py-0.5 cat-macro"><span contenteditable="true" data-edit-key="row:${s.id}:macro-mobile" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></span>
+                  <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" data-edit-key="row:${s.id}:qty" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></span>
+                  <span class="rounded px-2 py-0.5 cat-macro"><span contenteditable="true" data-edit-key="row:${s.id}:macro" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></span>
                 </div>
                 <div class="mt-2">
                   <span class="tier1-notes-label">${esc(notesLabel)}</span>
-                  <div contenteditable="true" data-edit-key="row:${s.id}:notes-mobile" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</div>
+                  <div contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</div>
                 </div>
               </div>
             </div>`;
@@ -209,6 +209,17 @@ function render() {
   document.getElementById('title').innerText = m.title;
   document.getElementById('subtitle').innerText = m.subtitle;
   document.getElementById('edit-hint').textContent = m.editHint;
+
+  const costBlock = document.getElementById('cost-block');
+  if (m.costTitle && m.costItems) {
+    costBlock.classList.remove('hidden');
+    costBlock.innerHTML =
+      `<div class="cost-title">${esc(m.costTitle)}</div>` +
+      m.costItems.map((item) => `<div class="cost-item">${esc(item)}</div>`).join('');
+  } else {
+    costBlock.classList.add('hidden');
+    costBlock.innerHTML = '';
+  }
   document.getElementById('mult-label').textContent = m.multLbl;
   document.getElementById('shop-label').textContent = m.shopBtn;
   document.getElementById('compact-label').textContent = m.compact;
@@ -551,6 +562,17 @@ function init() {
   document.querySelectorAll('[data-action^="format-"]').forEach((btn) => {
     btn.addEventListener('mousedown', (e) => e.preventDefault());
   });
+
+  let saveTimer;
+  const saveIndicator = document.getElementById('save-indicator');
+  document.addEventListener('focusout', (e) => {
+    if (e.target && e.target.hasAttribute('contenteditable')) {
+      clearTimeout(saveTimer);
+      saveIndicator.classList.add('flash');
+      saveTimer = setTimeout(() => saveIndicator.classList.remove('flash'), 1200);
+    }
+  });
+
   const slider = document.getElementById('font-size-slider');
   if (slider) {
     slider.addEventListener('input', (event) => {

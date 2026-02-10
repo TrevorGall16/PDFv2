@@ -23,6 +23,12 @@ const META = {
     notesPlaceholder: "",
     restoreStep: "Step",
     restoreTier1: "Tier 1",
+    costTitle: "Cost of Failure",
+    costItems: [
+      "+800 to +1500 kcal damage per episode",
+      "Insulin spike \u2192 Fat storage mode activated",
+      "Mental fatigue & guilt spiral for 24\u201348h",
+    ],
   },
   fr: {
     title: "Finaliser pour impression.",
@@ -48,6 +54,12 @@ const META = {
     notesPlaceholder: "",
     restoreStep: "\u00c9tape",
     restoreTier1: "Niveau 1",
+    costTitle: "Co\u00fbt de l\u2019\u00e9chec",
+    costItems: [
+      "+800 \u00e0 +1500 kcal de d\u00e9g\u00e2ts par \u00e9pisode",
+      "Pic d\u2019insuline \u2192 Mode stockage des graisses activ\u00e9",
+      "Fatigue mentale & spirale de culpabilit\u00e9 pendant 24\u201348h",
+    ],
   },
   es: {
     title: "Finalizar para imprimir.",
@@ -155,8 +167,8 @@ const PROTOCOL = [
   {
     step: "01",
     t: {
-      en: ["Hydration", "Drink 500ml sparkling water. Mechanical fullness."],
-      fr: ["Hydratation", "Boire 500ml d\u2019eau gazeuse. Remplissage m\u00e9canique."],
+      en: ["HYDRATE", "Drink 500ml sparkling water. Mechanical fullness."],
+      fr: ["HYDRATER", "Boire 500ml d\u2019eau gazeuse. Remplissage m\u00e9canique."],
       es: ["Hidrataci\u00f3n", "Beber 500ml de agua con gas. Llenado mec\u00e1nico."],
       it: ["Idratazione", "Bere 500ml di acqua frizzante. Riempimento meccanico."],
       ru: ["\u0413\u0438\u0434\u0440\u0430\u0442\u0430\u0446\u0438\u044f", "\u0412\u044b\u043f\u0438\u0442\u044c 500\u043c\u043b \u0433\u0430\u0437\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u043e\u0439 \u0432\u043e\u0434\u044b. \u041c\u0435\u0445\u0430\u043d\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u043d\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u0435."],
@@ -166,8 +178,8 @@ const PROTOCOL = [
   {
     step: "02",
     t: {
-      en: ["Timer", "Wait 5 minutes. Hormonal satiety signal delay."],
-      fr: ["Chrono", "Attendre 5 minutes. D\u00e9lai hormonal de sati\u00e9t\u00e9."],
+      en: ["WAIT", "Wait 5 minutes. Hormonal satiety signal delay."],
+      fr: ["ATTENDRE", "Attendre 5 minutes. D\u00e9lai hormonal de sati\u00e9t\u00e9."],
       es: ["Crono", "Esperar 5 minutos. Retraso hormonal de saciedad."],
       it: ["Timer", "Aspettare 5 minuti. Ritardo del segnale ormonale di saziet\u00e0."],
       ru: ["\u0422\u0430\u0439\u043c\u0435\u0440", "\u041f\u043e\u0434\u043e\u0436\u0434\u0430\u0442\u044c 5 \u043c\u0438\u043d\u0443\u0442. \u0413\u043e\u0440\u043c\u043e\u043d\u0430\u043b\u044c\u043d\u0430\u044f \u0437\u0430\u0434\u0435\u0440\u0436\u043a\u0430 \u0441\u044b\u0442\u043e\u0441\u0442\u0438."],
@@ -177,8 +189,8 @@ const PROTOCOL = [
   {
     step: "03",
     t: {
-      en: ["Action", "Still hungry? Select a Swap below."],
-      fr: ["Action", "Toujours faim ? S\u00e9lectionne un Swap ci-dessous."],
+      en: ["DEPLOY", "Still hungry? Select a Swap below."],
+      fr: ["D\u00c9PLOYER", "Toujours faim ? S\u00e9lectionne un Swap ci-dessous."],
       es: ["Acci\u00f3n", "\u00bfA\u00fan con hambre? Elige un Swap abajo."],
       it: ["Azione", "Ancora fame? Seleziona uno Swap qui sotto."],
       ru: ["\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u0435", "\u0412\u0441\u0451 \u0435\u0449\u0451 \u0433\u043e\u043b\u043e\u0434\u0435\u043d? \u0412\u044b\u0431\u0435\u0440\u0438 Swap \u043d\u0438\u0436\u0435."],
