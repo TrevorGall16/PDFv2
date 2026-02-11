@@ -14,6 +14,9 @@ const deletedSteps = new Set();
 const deletedRows = new Set();
 const deletedCats = new Set();
 const deletedTier1 = new Set();
+const deletedCostItems = new Set();
+const customSteps = [];
+let customStepCounter = 0;
 
 const CHK_SVG =
   '<svg class="w-2.5 h-2.5" style="color:var(--c-accent-fg);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -71,6 +74,22 @@ function formatDoc(command, event) {
   return false;
 }
 
+function applyFontSize(px) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount || sel.isCollapsed) return;
+  let node = sel.anchorNode;
+  if (node.nodeType === 3) node = node.parentElement;
+  if (!node.closest('[contenteditable="true"]')) return;
+  document.execCommand('fontSize', false, '7');
+  const root = node.closest('[contenteditable="true"]');
+  root.querySelectorAll('font[size="7"]').forEach(function (font) {
+    const span = document.createElement('span');
+    span.style.fontSize = px + 'px';
+    while (font.firstChild) span.appendChild(font.firstChild);
+    font.parentNode.replaceChild(span, font);
+  });
+}
+
 function getTier1Swaps() {
   const swaps = [];
   CATEGORIES.forEach((cat) => {
@@ -96,7 +115,6 @@ function renderTier1() {
     .map((swap) => {
       const c = swap.t[lang] || swap.t.en;
       const qty = scaleNumbers(c[2], mult);
-      const mac = scaleNumbers(swap.macros, mult);
       const notesLabel = m.notesLabel || 'Strategic Notes';
       return `
         <div class="tier1-item" data-tier-id="${swap.id}">
@@ -105,7 +123,6 @@ function renderTier1() {
           <div contenteditable="true" data-edit-key="tier1:${swap.id}:solution" class="editable-cell tier1-solution">${esc(c[1])}</div>
           <div class="tier1-meta mn">
             <span contenteditable="true" data-edit-key="tier1:${swap.id}:qty" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span>
-            <span contenteditable="true" data-edit-key="tier1:${swap.id}:macro" class="editable-cell" data-field="m" data-base="${esc(swap.macros)}">${esc(mac)}</span>
           </div>
           <div class="tier1-notes">
             <span class="tier1-notes-label">${esc(notesLabel)}</span>
@@ -116,16 +133,37 @@ function renderTier1() {
     .join('');
 }
 
+function addProtocolStep() {
+  customStepCounter++;
+  const id = 'c' + customStepCounter;
+  customSteps.push({
+    step: id,
+    t: {
+      en: ['NEW STEP', 'Click to edit this step.'],
+      fr: ['NOUVELLE \u00c9TAPE', 'Cliquez pour modifier.'],
+      es: ['NUEVO PASO', 'Haz clic para editar.'],
+      it: ['NUOVO PASSO', 'Clicca per modificare.'],
+      ru: ['\u041d\u041e\u0412\u042b\u0419 \u0428\u0410\u0413', '\u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u0434\u043b\u044f \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f.'],
+      jp: ['\u65b0\u30b9\u30c6\u30c3\u30d7', '\u30af\u30ea\u30c3\u30af\u3057\u3066\u7de8\u96c6\u3002'],
+    },
+  });
+  const preserved = captureEditableContent();
+  renderProtocolSection();
+  applyEditableContent(preserved);
+}
+
 function renderProtocolSection() {
   const m = META[lang] || META.en;
-  const visibleSteps = PROTOCOL.filter((p) => !deletedSteps.has(p.step));
+  const allSteps = [...PROTOCOL, ...customSteps];
+  const visibleSteps = allSteps.filter((p) => !deletedSteps.has(p.step));
   document.getElementById('protocol-body').innerHTML = visibleSteps
-    .map((p) => {
+    .map((p, idx) => {
       const c = p.t[lang] || p.t.en;
+      const displayNum = String(idx + 1).padStart(2, '0');
       return `
           <div data-step="${p.step}" class="flex gap-4 items-start group relative">
             <button class="step-del no-print absolute -top-1 -right-1" data-action="del-step" data-step="${p.step}" title="Remove step">&times;</button>
-            <span class="mn text-3xl sm:text-4xl font-bold leading-none tracking-tighter select-none shrink-0 tm">${p.step}</span>
+            <span class="mn text-3xl sm:text-4xl font-bold leading-none tracking-tighter select-none shrink-0 tm">${displayNum}</span>
             <div class="pt-1">
               <h3 contenteditable="true" data-edit-key="protocol:${p.step}:title" class="editable-cell text-xs font-bold uppercase tracking-[0.12em] hd">${esc(c[0])}</h3>
               <p contenteditable="true" data-edit-key="protocol:${p.step}:desc" class="editable-cell mt-1 text-[11px] tm leading-relaxed">${esc(c[1])}</p>
@@ -133,7 +171,7 @@ function renderProtocolSection() {
           </div>`;
     })
     .join('');
-  document.getElementById('step-add-label').textContent = m.restoreStep || 'Step';
+  document.getElementById('step-add-label').textContent = m.addStep || 'Add Step';
 }
 
 function renderCategoriesSection() {
@@ -151,7 +189,6 @@ function renderCategoriesSection() {
           const c = s.t[lang] || s.t.en;
           const altClass = i % 2 !== 0 ? 'row-alt' : '';
           const qty = scaleNumbers(c[2], mult);
-          const mac = scaleNumbers(s.macros, mult);
           const notesLabel = m.notesLabel || 'Strategic Notes';
           return `
             <div data-row data-id="${s.id}">
@@ -159,7 +196,6 @@ function renderCategoriesSection() {
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:craving" class="editable-cell text-[12px] font-semibold">${esc(c[0])}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:solution" class="editable-cell text-[12px] tm">${esc(c[1])}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:qty" class="editable-cell mn text-[10px] font-medium tm" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:macro" class="editable-cell mn text-[10px] font-medium tm" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
                 <div class="flex items-center justify-center no-print"><button class="row-del" data-action="del-row" data-row-id="${s.id}">&times;</button></div>
               </div>
@@ -173,7 +209,6 @@ function renderCategoriesSection() {
                 <p><span contenteditable="true" data-edit-key="row:${s.id}:solution" class="editable-cell text-[12px] tm">${esc(c[1])}</span></p>
                 <div class="flex flex-wrap gap-2 mn text-[10px] tm">
                   <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" data-edit-key="row:${s.id}:qty" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></span>
-                  <span class="rounded px-2 py-0.5 cat-macro"><span contenteditable="true" data-edit-key="row:${s.id}:macro" class="editable-cell" data-field="m" data-base="${esc(s.macros)}">${esc(mac)}</span></span>
                 </div>
                 <div class="mt-2">
                   <span class="tier1-notes-label">${esc(notesLabel)}</span>
@@ -198,6 +233,7 @@ function renderCategoriesSection() {
               </div>
               ${rows}
             </div>
+            <button class="tb-btn restore-btn no-print mt-2" data-action="add-cat-row" data-cat="${cat.slug}">+</button>
           </div>`;
     })
     .join('');
@@ -210,12 +246,31 @@ function render() {
   document.getElementById('subtitle').innerText = m.subtitle;
   document.getElementById('edit-hint').textContent = m.editHint;
 
+  document.getElementById('protocol-for-label').textContent = m.protocolFor;
+  const nameEl = document.getElementById('protocol-for-name');
+  if (!nameEl.textContent.trim() || nameEl.textContent === (META.en.protocolForPlaceholder || '')) {
+    nameEl.textContent = m.protocolForPlaceholder;
+  }
+  document.getElementById('version-label-el').textContent = m.versionLabel;
+  const verEl = document.getElementById('version-value');
+  if (!verEl.textContent.trim()) {
+    verEl.textContent = today();
+  }
+  document.getElementById('variant-label').textContent = m.variantLabel;
+
   const costBlock = document.getElementById('cost-block');
   if (m.costTitle && m.costItems) {
     costBlock.classList.remove('hidden');
+    const xSvg = '<svg class="cost-bullet" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>';
     costBlock.innerHTML =
-      `<div class="cost-title">${esc(m.costTitle)}</div>` +
-      m.costItems.map((item) => `<div class="cost-item">${esc(item)}</div>`).join('');
+      `<div class="cost-title" contenteditable="true" data-edit-key="cost:title">${esc(m.costTitle)}</div>` +
+      m.costItems
+        .map((item, i) => {
+          if (deletedCostItems.has(i)) return '';
+          return `<div class="cost-item" data-cost-idx="${i}">${xSvg}<span contenteditable="true" data-edit-key="cost:item:${i}" class="editable-cell" style="flex:1">${esc(item)}</span><button class="cost-del no-print" data-action="del-cost" data-cost-idx="${i}">&times;</button></div>`;
+        })
+        .join('') +
+      '<button class="tb-btn restore-btn no-print mt-2" data-action="add-cost" style="font-size:9px;padding:3px 10px;">+</button>';
   } else {
     costBlock.classList.add('hidden');
     costBlock.innerHTML = '';
@@ -253,15 +308,18 @@ function switchLang(nextLang) {
     b.classList.toggle('on', b.getAttribute('data-lang') === nextLang)
   );
   const p = document.getElementById('page');
+  const p2 = document.getElementById('page2');
   p.classList.add('fading');
+  if (p2) p2.classList.add('fading');
   setTimeout(() => {
     render();
     const notesOnly = new Map();
     preserved.forEach((val, key) => {
-      if (key.includes(':notes')) notesOnly.set(key, val);
+      if (key.includes(':notes') || key.startsWith('identity:')) notesOnly.set(key, val);
     });
     applyEditableContent(notesOnly);
     p.classList.remove('fading');
+    if (p2) p2.classList.remove('fading');
   }, 200);
   closeShop();
 }
@@ -277,9 +335,22 @@ function setMult(nextMult) {
   });
 }
 
+function setVariant(name) {
+  const variantMults = { solo: 1, couple: 1.6, family: 2.5 };
+  const nextMult = variantMults[name] || 1;
+  document.querySelectorAll('[data-variant]').forEach((b) =>
+    b.classList.toggle('on', b.getAttribute('data-variant') === name)
+  );
+  setMult(nextMult);
+  document.querySelectorAll('[data-mult]').forEach((b) =>
+    b.classList.remove('on')
+  );
+}
+
 function toggleCompact() {
   isCompact = !isCompact;
   document.getElementById('page').classList.toggle('compact', isCompact);
+  document.getElementById('page2').classList.toggle('compact', isCompact);
   document.getElementById('btn-compact').classList.toggle('on', isCompact);
 }
 
@@ -360,6 +431,72 @@ function restoreProtocolStep() {
   applyEditableContent(preserved);
 }
 
+function addCostItem() {
+  const costBlock = document.getElementById('cost-block');
+  if (!costBlock) return;
+  const xSvg = '<svg class="cost-bullet" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>';
+  const el = document.createElement('div');
+  el.className = 'cost-item';
+  el.innerHTML = xSvg + '<span contenteditable="true" class="editable-cell" style="flex:1">\u2026</span>';
+  const addBtn = costBlock.querySelector('[data-action="add-cost"]');
+  if (addBtn) {
+    costBlock.insertBefore(el, addBtn);
+  } else {
+    costBlock.appendChild(el);
+  }
+  const sp = el.querySelector('span[contenteditable]');
+  sp.focus();
+  const range = document.createRange();
+  range.selectNodeContents(sp);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function addCategoryRow(slug) {
+  const catEl = document.querySelector('[data-category="' + slug + '"]');
+  if (!catEl) return;
+  const card = catEl.querySelector('.themed-card');
+  if (!card) return;
+  const m = META[lang] || META.en;
+  const notesLabel = m.notesLabel || 'Strategic Notes';
+  const rowId = 'custom-' + slug + '-' + Date.now();
+  const rowCount = card.querySelectorAll('[data-row]').length;
+  const altClass = rowCount % 2 !== 0 ? 'row-alt' : '';
+  const html = `
+    <div data-row data-id="${rowId}">
+      <div class="hidden md:grid gap-px items-center py-print swap-grid swap-grid-card ${altClass}">
+        <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] font-semibold">\u2026</span></div>
+        <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] tm">\u2026</span></div>
+        <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell mn text-[10px] font-medium tm">\u2026</span></div>
+        <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
+        <div></div>
+      </div>
+      <div class="md:hidden px-4 py-3 space-y-2 swap-grid-card ${altClass}">
+        <span contenteditable="true" class="editable-cell text-[13px] font-semibold">\u2026</span>
+        <p><span contenteditable="true" class="editable-cell text-[12px] tm">\u2026</span></p>
+        <div class="flex flex-wrap gap-2 mn text-[10px] tm">
+          <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" class="editable-cell">\u2026</span></span>
+        </div>
+        <div class="mt-2">
+          <span class="tier1-notes-label">${esc(notesLabel)}</span>
+          <div contenteditable="true" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</div>
+        </div>
+      </div>
+    </div>`;
+  card.insertAdjacentHTML('beforeend', html);
+  const newRow = card.querySelector('[data-row]:last-child');
+  const firstEditable = newRow.querySelector('[contenteditable]');
+  if (firstEditable) {
+    firstEditable.focus();
+    const range = document.createRange();
+    range.selectNodeContents(firstEditable);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
 function restoreDefaults() {
   const preserved = captureEditableContent();
   const shopBody = document.getElementById('shop-body');
@@ -368,6 +505,9 @@ function restoreDefaults() {
   deletedRows.clear();
   deletedCats.clear();
   deletedTier1.clear();
+  deletedCostItems.clear();
+  customSteps.length = 0;
+  customStepCounter = 0;
   render();
   applyEditableContent(preserved);
   const m = META[lang] || META.en;
@@ -380,6 +520,10 @@ function restoreDefaults() {
 function buildShoppingList({ reveal = true } = {}) {
   const m = META[lang] || META.en;
   const ids = [];
+  document.querySelectorAll('.tier1-item[data-tier-id]').forEach((r) => {
+    const id = parseInt(r.getAttribute('data-tier-id'), 10);
+    if (id) ids.push(id);
+  });
   document.querySelectorAll('[data-row]').forEach((r) => {
     const id = parseInt(r.getAttribute('data-id'), 10);
     if (id) ids.push(id);
@@ -475,6 +619,11 @@ function handleClick(event) {
   }
   if (target.matches('[data-mult]')) {
     setMult(parseFloat(target.getAttribute('data-mult')));
+    document.querySelectorAll('[data-variant]').forEach((b) => b.classList.remove('on'));
+    return;
+  }
+  if (target.matches('[data-variant]')) {
+    setVariant(target.getAttribute('data-variant'));
     return;
   }
 
@@ -509,11 +658,41 @@ function handleClick(event) {
     case 'del-tier1':
       delTier1(parseInt(target.getAttribute('data-tier-id'), 10));
       break;
+    case 'del-cost': {
+      const idx = parseInt(target.getAttribute('data-cost-idx'), 10);
+      const el = target.closest('.cost-item');
+      if (el) {
+        el.style.opacity = '0';
+        setTimeout(() => {
+          deletedCostItems.add(idx);
+          const m = META[lang] || META.en;
+          const xSvg = '<svg class="cost-bullet" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>';
+          const costBlock = document.getElementById('cost-block');
+          const titleEl = costBlock.querySelector('[data-edit-key="cost:title"]');
+          const titleHTML = titleEl ? titleEl.innerHTML : esc(m.costTitle);
+          costBlock.innerHTML =
+            `<div class="cost-title" contenteditable="true" data-edit-key="cost:title">${titleHTML}</div>` +
+            m.costItems
+              .map((item, i) => {
+                if (deletedCostItems.has(i)) return '';
+                return `<div class="cost-item" data-cost-idx="${i}">${xSvg}<span contenteditable="true" data-edit-key="cost:item:${i}" class="editable-cell" style="flex:1">${esc(item)}</span><button class="cost-del no-print" data-action="del-cost" data-cost-idx="${i}">&times;</button></div>`;
+              })
+              .join('');
+        }, 200);
+      }
+      break;
+    }
     case 'restore-tier1':
       restoreTier1Card();
       break;
-    case 'restore-step':
-      restoreProtocolStep();
+    case 'add-cost':
+      addCostItem();
+      break;
+    case 'add-cat-row':
+      addCategoryRow(target.getAttribute('data-cat'));
+      break;
+    case 'add-step':
+      addProtocolStep();
       break;
     case 'close-shop':
       closeShop();
@@ -530,6 +709,9 @@ function handleClick(event) {
     case 'toggle-check':
       target.classList.toggle('done');
       event.preventDefault();
+      break;
+    case 'font-size':
+      applyFontSize(parseInt(target.getAttribute('data-size'), 10));
       break;
     case 'format-bold':
       formatDoc('bold', event);
@@ -555,11 +737,45 @@ function handleKeydown(event) {
   }
 }
 
+function getA4HeightPx() {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;visibility:hidden;height:297mm;pointer-events:none;';
+  document.body.appendChild(probe);
+  const h = probe.offsetHeight;
+  probe.remove();
+  return h;
+}
+
+function initOverflowGuardian() {
+  const page = document.getElementById('page');
+  const alert = document.getElementById('overflow-alert');
+  const alertText = document.getElementById('overflow-alert-text');
+  if (!page || !alert) return;
+
+  const check = () => {
+    const a4HeightPx = getA4HeightPx();
+    const h = page.scrollHeight;
+    const m = META[lang] || META.en;
+    if (h > a4HeightPx) {
+      alert.classList.remove('hidden');
+      alertText.textContent = m.overflowAlert;
+    } else {
+      alert.classList.add('hidden');
+    }
+  };
+
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(check).observe(page);
+  }
+  check();
+}
+
 function init() {
   render();
+  initOverflowGuardian();
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('click', handleClick);
-  document.querySelectorAll('[data-action^="format-"]').forEach((btn) => {
+  document.querySelectorAll('[data-action^="format-"], [data-action="font-size"]').forEach((btn) => {
     btn.addEventListener('mousedown', (e) => e.preventDefault());
   });
 
@@ -572,15 +788,6 @@ function init() {
       saveTimer = setTimeout(() => saveIndicator.classList.remove('flash'), 1200);
     }
   });
-
-  const slider = document.getElementById('font-size-slider');
-  if (slider) {
-    slider.addEventListener('input', (event) => {
-      const value = event.target.value;
-      document.documentElement.style.setProperty('--base-fs', `${value}px`);
-    });
-    document.documentElement.style.setProperty('--base-fs', `${slider.value}px`);
-  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

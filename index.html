@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Le Bouclier 20h–22h — V5 Preview</title>
+  <title>Le Bouclier 20h–22h — V5.5 Tactical Funnel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -53,15 +53,29 @@
         </div>
       </div>
       <div class="setup-block">
+        <h2 class="setup-label" id="variant-label">Variant</h2>
+        <div id="vg" class="pg pill-group-bg">
+          <button data-variant="solo" class="pl vr on">SOLO</button>
+          <button data-variant="couple" class="pl vr">COUPLE</button>
+          <button data-variant="family" class="pl vr">FAMILY</button>
+        </div>
+      </div>
+      <div class="setup-block">
         <h2 class="setup-label">Text Formatting</h2>
-        <label class="format-label">
-          <span>Font Size</span>
-          <input id="font-size-slider" type="range" min="14" max="20" value="16">
-        </label>
+        <div class="format-section">
+          <span class="format-section-label">Size</span>
+          <div class="format-actions">
+            <button class="tb-btn fs-btn" data-action="font-size" data-size="14">14</button>
+            <button class="tb-btn fs-btn" data-action="font-size" data-size="18">18</button>
+            <button class="tb-btn fs-btn" data-action="font-size" data-size="24">24</button>
+            <button class="tb-btn fs-btn" data-action="font-size" data-size="32">32</button>
+            <button class="tb-btn fs-btn" data-action="font-size" data-size="48">48</button>
+          </div>
+        </div>
         <div class="format-actions">
-          <button class="tb-btn" data-action="format-bold">Bold</button>
-          <button class="tb-btn" data-action="format-italic">Italic</button>
-          <button class="tb-btn" data-action="format-underline">Underline</button>
+          <button class="tb-btn fmt-btn" data-action="format-bold"><b>B</b></button>
+          <button class="tb-btn fmt-btn" data-action="format-italic"><i>I</i></button>
+          <button class="tb-btn fmt-btn" data-action="format-underline"><u>U</u></button>
         </div>
       </div>
       <div class="setup-actions">
@@ -79,8 +93,12 @@
 
     <div class="app-content">
       <div id="restore-toast" class="restore-toast no-print"></div>
+      <div id="overflow-alert" class="overflow-alert no-print hidden">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span id="overflow-alert-text"></span>
+      </div>
 
-      <main id="page" class="lang-fade w-full max-w-[860px] themed-page rounded-2xl my-6 px-10 py-12 shadow-xl grid gap-12 relative overflow-hidden">
+      <main id="page" class="a4-page lang-fade grid gap-12">
         <svg class="stamp" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
           <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1"/>
@@ -101,10 +119,29 @@
                   class="editable-cell text-3xl sm:text-4xl font-black uppercase tracking-tight leading-[1.05] whitespace-pre-line hd"></h1>
                 <p id="subtitle" contenteditable="true" data-edit-key="header:subtitle"
                   class="editable-cell text-xs font-medium tracking-wide tm"></p>
+                <div id="identity-block" class="identity-block">
+                  <div class="identity-field">
+                    <span class="identity-label" id="protocol-for-label"></span>
+                    <span contenteditable="true" data-edit-key="identity:name" class="editable-cell identity-value" id="protocol-for-name"></span>
+                  </div>
+                  <div class="identity-field">
+                    <span class="identity-label" id="version-label-el"></span>
+                    <span contenteditable="true" data-edit-key="identity:version" class="editable-cell identity-value mn" id="version-value"></span>
+                  </div>
+                </div>
               </div>
               <div id="cost-block" class="cost-block hidden"></div>
             </div>
           </header>
+        </section>
+
+        <section data-module="protocol" class="module group print-brk">
+          <div class="module-ctrl no-print">
+            <button class="mod-arrow" data-action="move-module" data-dir="-1">&#x2191;</button>
+            <button class="mod-arrow" data-action="move-module" data-dir="1">&#x2193;</button>
+          </div>
+          <div id="protocol-body" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"></div>
+          <button class="tb-btn restore-btn no-print mt-3" data-action="add-step">+ <span id="step-add-label"></span></button>
         </section>
 
         <section data-module="tier1" class="module group print-brk">
@@ -121,16 +158,9 @@
             <button class="tb-btn restore-btn no-print mt-3" data-action="restore-tier1">+ <span id="tier1-add-label"></span></button>
           </div>
         </section>
+      </main>
 
-        <section data-module="protocol" class="module group print-brk">
-          <div class="module-ctrl no-print">
-            <button class="mod-arrow" data-action="move-module" data-dir="-1">&#x2191;</button>
-            <button class="mod-arrow" data-action="move-module" data-dir="1">&#x2193;</button>
-          </div>
-          <div id="protocol-body" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"></div>
-          <button class="tb-btn restore-btn no-print mt-3" data-action="restore-step">+ <span id="step-add-label"></span></button>
-        </section>
-
+      <div id="page2" class="a4-page lang-fade grid gap-10">
         <section data-module="categories" class="module group">
           <div class="module-ctrl no-print">
             <button class="mod-arrow" data-action="move-module" data-dir="-1">&#x2191;</button>
@@ -159,9 +189,9 @@
             </div>
           </footer>
         </section>
-      </main>
+      </div>
 
-      <div id="shopping-page" class="w-full max-w-[860px] themed-page rounded-2xl mb-6 px-10 py-12 shadow-xl hidden">
+      <div id="shopping-page" class="a4-page hidden">
         <div class="flex items-start justify-between mb-4">
           <div>
             <h2 id="shop-title" class="text-2xl font-black uppercase tracking-tight hd"></h2>
