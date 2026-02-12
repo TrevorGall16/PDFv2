@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git -C \"D:\\\\Projects\\\\PDFv2\" remote -v)"
+      "Bash(git -C \"D:\\\\Projects\\\\PDFv2\" remote -v)",
+      "Bash(ls:*)"
     ]
   }
 }

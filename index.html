@@ -93,11 +93,6 @@
 
     <div class="app-content">
       <div id="restore-toast" class="restore-toast no-print"></div>
-      <div id="overflow-alert" class="overflow-alert no-print hidden">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span id="overflow-alert-text"></span>
-      </div>
-
       <main id="page" class="a4-page lang-fade grid gap-12">
         <svg class="stamp" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
@@ -151,13 +146,14 @@
           </div>
           <div class="tier1-block">
             <div class="tier1-header">
-              <h2 id="tier-title" class="tier1-title hd"></h2>
-              <p id="tier-subtitle" class="tier1-subtitle tm"></p>
+              <h2 id="tier-title" contenteditable="true" data-edit-key="tier1:title" class="editable-cell tier1-title hd"></h2>
+              <p id="tier-subtitle" contenteditable="true" data-edit-key="tier1:subtitle" class="editable-cell tier1-subtitle tm"></p>
             </div>
             <div id="tier1-body" class="grid gap-6"></div>
             <button class="tb-btn restore-btn no-print mt-3" data-action="restore-tier1">+ <span id="tier1-add-label"></span></button>
           </div>
         </section>
+        <div class="page-num" data-page="1"></div>
       </main>
 
       <div id="page2" class="a4-page lang-fade grid gap-10">
@@ -189,9 +185,10 @@
             </div>
           </footer>
         </section>
+        <div class="page-num" data-page="2"></div>
       </div>
 
-      <div id="shopping-page" class="a4-page hidden">
+      <div id="shopping-page" class="a4-page">
         <div class="flex items-start justify-between mb-4">
           <div>
             <h2 id="shop-title" class="text-2xl font-black uppercase tracking-tight hd"></h2>
@@ -213,6 +210,7 @@
         <div class="mt-8 pt-4 shop-footer">
           <p id="shop-footer" class="text-[10px] mn text-center tm"></p>
         </div>
+        <div class="page-num" data-page="3"></div>
       </div>
     </div>
   </div>

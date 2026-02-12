@@ -107,8 +107,10 @@ function getTier1Swaps() {
 
 function renderTier1() {
   const m = META[lang] || META.en;
-  document.getElementById('tier-title').textContent = m.tierTitle;
-  document.getElementById('tier-subtitle').textContent = m.tierSubtitle;
+  const tierTitleEl = document.getElementById('tier-title');
+  const tierSubEl = document.getElementById('tier-subtitle');
+  tierTitleEl.textContent = m.tierTitle;
+  tierSubEl.textContent = m.tierSubtitle;
   const tierBody = document.getElementById('tier1-body');
   const tierSwaps = getTier1Swaps();
   tierBody.innerHTML = tierSwaps
@@ -123,6 +125,7 @@ function renderTier1() {
           <div contenteditable="true" data-edit-key="tier1:${swap.id}:solution" class="editable-cell tier1-solution">${esc(c[1])}</div>
           <div class="tier1-meta mn">
             <span contenteditable="true" data-edit-key="tier1:${swap.id}:qty" class="editable-cell" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span>
+            <span class="macro-line">${esc(swap.macros)}</span>
           </div>
           <div class="tier1-notes">
             <span class="tier1-notes-label">${esc(notesLabel)}</span>
@@ -190,13 +193,14 @@ function renderCategoriesSection() {
           const altClass = i % 2 !== 0 ? 'row-alt' : '';
           const qty = scaleNumbers(c[2], mult);
           const notesLabel = m.notesLabel || 'Strategic Notes';
+          const macroDefault = s.macros ? '<span class="macro-line">' + esc(s.macros) + '</span>' : '';
           return `
             <div data-row data-id="${s.id}">
               <div class="hidden md:grid gap-px items-center py-print swap-grid swap-grid-card ${altClass}">
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:craving" class="editable-cell text-[12px] font-semibold">${esc(c[0])}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:solution" class="editable-cell text-[12px] tm">${esc(c[1])}</span></div>
                 <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:qty" class="editable-cell mn text-[10px] font-medium tm" data-field="q" data-base="${esc(c[2])}">${esc(qty)}</span></div>
-                <div class="px-3 py-2.5"><span contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
+                <div class="px-3 py-2.5"><div contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${macroDefault}</div></div>
                 <div class="flex items-center justify-center no-print"><button class="row-del" data-action="del-row" data-row-id="${s.id}">&times;</button></div>
               </div>
               <div class="md:hidden px-4 py-3 space-y-2 swap-grid-card ${altClass}">
@@ -212,7 +216,7 @@ function renderCategoriesSection() {
                 </div>
                 <div class="mt-2">
                   <span class="tier1-notes-label">${esc(notesLabel)}</span>
-                  <div contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</div>
+                  <div contenteditable="true" data-edit-key="row:${s.id}:notes" class="editable-cell notes-field text-[11px]">${macroDefault}</div>
                 </div>
               </div>
             </div>`;
@@ -237,6 +241,20 @@ function renderCategoriesSection() {
           </div>`;
     })
     .join('');
+}
+
+const SERIAL_HASH = '#SH-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+function updatePageNumbers() {
+  const pages = document.querySelectorAll('.a4-page');
+  const visible = [...pages].filter(
+    (p) => !p.classList.contains('hidden') && p.offsetParent !== null
+  );
+  const total = visible.length;
+  visible.forEach((p, i) => {
+    const num = p.querySelector('.page-num');
+    if (num) num.textContent = 'Page ' + (i + 1) + ' / ' + total + '  ' + SERIAL_HASH;
+  });
 }
 
 function render() {
@@ -288,8 +306,9 @@ function render() {
   document.getElementById('tier1-add-label').textContent = m.restoreTier1 || 'Tier 1';
 
   document.getElementById('motivation').innerText = m.motto;
-  document.getElementById('footer-ver').textContent = m.ver;
+  document.getElementById('footer-ver').textContent = m.ver + '  ' + SERIAL_HASH;
   document.getElementById('footer-date').textContent = today();
+  updatePageNumbers();
 }
 
 function setTheme(nextTheme) {
@@ -324,6 +343,14 @@ function switchLang(nextLang) {
   closeShop();
 }
 
+function flashQtyFields() {
+  document.querySelectorAll('[data-field]').forEach((el) => {
+    el.classList.remove('qty-flash');
+    void el.offsetWidth;
+    el.classList.add('qty-flash');
+  });
+}
+
 function setMult(nextMult) {
   mult = nextMult;
   document.querySelectorAll('[data-mult]').forEach((b) =>
@@ -333,6 +360,7 @@ function setMult(nextMult) {
     const base = el.getAttribute('data-base');
     if (base) el.textContent = scaleNumbers(base, nextMult);
   });
+  flashQtyFields();
 }
 
 function setVariant(name) {
@@ -437,7 +465,7 @@ function addCostItem() {
   const xSvg = '<svg class="cost-bullet" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>';
   const el = document.createElement('div');
   el.className = 'cost-item';
-  el.innerHTML = xSvg + '<span contenteditable="true" class="editable-cell" style="flex:1">\u2026</span>';
+  el.innerHTML = xSvg + '<span contenteditable="true" class="editable-cell" style="flex:1">\u2026</span><button class="cost-del no-print" data-action="del-cost" data-cost-idx="custom">&times;</button>';
   const addBtn = costBlock.querySelector('[data-action="add-cost"]');
   if (addBtn) {
     costBlock.insertBefore(el, addBtn);
@@ -470,10 +498,13 @@ function addCategoryRow(slug) {
         <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell text-[12px] tm">\u2026</span></div>
         <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell mn text-[10px] font-medium tm">\u2026</span></div>
         <div class="px-3 py-2.5"><span contenteditable="true" class="editable-cell notes-field text-[11px]">${esc(m.notesPlaceholder || '')}</span></div>
-        <div></div>
+        <div class="flex items-center justify-center no-print"><button class="row-del" data-action="del-row" data-row-id="${rowId}">&times;</button></div>
       </div>
       <div class="md:hidden px-4 py-3 space-y-2 swap-grid-card ${altClass}">
-        <span contenteditable="true" class="editable-cell text-[13px] font-semibold">\u2026</span>
+        <div class="flex items-center justify-between gap-2">
+          <span contenteditable="true" class="editable-cell text-[13px] font-semibold">\u2026</span>
+          <button class="row-del no-print text-sm" data-action="del-row" data-row-id="${rowId}">&times;</button>
+        </div>
         <p><span contenteditable="true" class="editable-cell text-[12px] tm">\u2026</span></p>
         <div class="flex flex-wrap gap-2 mn text-[10px] tm">
           <span class="rounded px-2 py-0.5 cat-qty"><span contenteditable="true" class="editable-cell">\u2026</span></span>
@@ -566,6 +597,7 @@ function shopItemHTML(text) {
 
 function closeShop() {
   document.getElementById('shopping-page').classList.add('hidden');
+  updatePageNumbers();
 }
 
 function addShopItem() {
@@ -649,9 +681,22 @@ function handleClick(event) {
     case 'del-step':
       delStep(target.getAttribute('data-step'));
       break;
-    case 'del-row':
-      delRow(parseInt(target.getAttribute('data-row-id'), 10));
+    case 'del-row': {
+      const rowIdAttr = target.getAttribute('data-row-id');
+      const rowIdNum = parseInt(rowIdAttr, 10);
+      if (isNaN(rowIdNum)) {
+        const rowEl = target.closest('[data-row]');
+        if (rowEl) {
+          rowEl.style.opacity = '0';
+          rowEl.style.maxHeight = '0';
+          rowEl.style.overflow = 'hidden';
+          setTimeout(() => rowEl.remove(), 280);
+        }
+      } else {
+        delRow(rowIdNum);
+      }
       break;
+    }
     case 'del-cat':
       delCat(target.getAttribute('data-cat'));
       break;
@@ -659,10 +704,14 @@ function handleClick(event) {
       delTier1(parseInt(target.getAttribute('data-tier-id'), 10));
       break;
     case 'del-cost': {
-      const idx = parseInt(target.getAttribute('data-cost-idx'), 10);
+      const costIdx = target.getAttribute('data-cost-idx');
       const el = target.closest('.cost-item');
-      if (el) {
-        el.style.opacity = '0';
+      if (!el) break;
+      el.style.opacity = '0';
+      if (costIdx === 'custom') {
+        setTimeout(() => el.remove(), 200);
+      } else {
+        const idx = parseInt(costIdx, 10);
         setTimeout(() => {
           deletedCostItems.add(idx);
           const m = META[lang] || META.en;
@@ -677,7 +726,8 @@ function handleClick(event) {
                 if (deletedCostItems.has(i)) return '';
                 return `<div class="cost-item" data-cost-idx="${i}">${xSvg}<span contenteditable="true" data-edit-key="cost:item:${i}" class="editable-cell" style="flex:1">${esc(item)}</span><button class="cost-del no-print" data-action="del-cost" data-cost-idx="${i}">&times;</button></div>`;
               })
-              .join('');
+              .join('') +
+            '<button class="tb-btn restore-btn no-print mt-2" data-action="add-cost" style="font-size:9px;padding:3px 10px;">+</button>';
         }, 200);
       }
       break;
@@ -737,42 +787,9 @@ function handleKeydown(event) {
   }
 }
 
-function getA4HeightPx() {
-  const probe = document.createElement('div');
-  probe.style.cssText = 'position:absolute;visibility:hidden;height:297mm;pointer-events:none;';
-  document.body.appendChild(probe);
-  const h = probe.offsetHeight;
-  probe.remove();
-  return h;
-}
-
-function initOverflowGuardian() {
-  const page = document.getElementById('page');
-  const alert = document.getElementById('overflow-alert');
-  const alertText = document.getElementById('overflow-alert-text');
-  if (!page || !alert) return;
-
-  const check = () => {
-    const a4HeightPx = getA4HeightPx();
-    const h = page.scrollHeight;
-    const m = META[lang] || META.en;
-    if (h > a4HeightPx) {
-      alert.classList.remove('hidden');
-      alertText.textContent = m.overflowAlert;
-    } else {
-      alert.classList.add('hidden');
-    }
-  };
-
-  if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(check).observe(page);
-  }
-  check();
-}
-
 function init() {
   render();
-  initOverflowGuardian();
+  buildShoppingList({ reveal: false });
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('click', handleClick);
   document.querySelectorAll('[data-action^="format-"], [data-action="font-size"]').forEach((btn) => {
